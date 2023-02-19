@@ -1,0 +1,15 @@
+* {
+  margin: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  font-family: 'Roboto', sans-serif;
+}
+
+.window {
+  width: 360px;
+  height: 800px;
+}
+
+.Login {
+  text-align: center;
+}
