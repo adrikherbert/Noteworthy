@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link} from "react-router-dom";
 
-import '../page.css';
+import logo from "../images/NoteworthyBlack.png"
+
+import './enter.css';
 
 const CreateAccount = () => {
     const navigate = useNavigate();
@@ -27,33 +29,48 @@ const CreateAccount = () => {
     };
 
     return(
-        <div>
-            <form onSubmit={handleSubmit}>
-                <label>Name:<br></br>
-                    <input 
-                        type="text"
-                        value={user_name}
-                        onChange={(event) => setName(event.target.value)}
-                    /><br></br>
-                </label>
-                <label>Email:<br></br>
-                    <input 
-                        type="text" 
-                        value={email}
-                        onChange={(event) => setEmail(event.target.value)}
-                    /><br></br>
-                </label>
-                <label>Password:<br></br>
-                    <input 
-                        type="text"
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                    /><br></br>
-                </label><br></br>
-                <input type="submit" value="Submit"/>
-            </form>
-            <h3>Trying to log in?</h3>
-            <Link to="/login" >Login instead.</Link>
+        <div className="fullPage">
+            <div className="modal">
+                <img src={logo} className="title"/>
+                <h3>Creat Account</h3>
+                <div>
+                   <form onSubmit={handleSubmit}>
+                    <label>Name:<br></br>
+                        <input 
+                            type="text"
+                            value={user_name}
+                            onChange={(event) => setName(event.target.value)}
+                        /><br></br>
+                    </label>
+                    <label>Email:<br></br>
+                        <input 
+                            type="text" 
+                            value={email}
+                            onChange={(event) => setEmail(event.target.value)}
+                        /><br></br>
+                    </label>
+                    <label>Password:<br></br>
+                        <input 
+                            type="text"
+                            value={password}
+                            onChange={(event) => setPassword(event.target.value)}
+                        /><br></br>
+                    </label>
+                    <label>Re-Type Password:<br></br>
+                        <input 
+                            type="text"
+                            value={password}
+                            onChange={(event) => setPassword(event.target.value)}
+                        /><br></br>
+                    </label><br></br>
+                    <input type="submit" value="Create Account"/>
+                    </form> 
+                </div>
+                <div>
+                    <h4>Trying to log in?</h4>
+                    <Link to="/login" >Login instead.</Link>
+                </div>
+            </div>
         </div>
     )   
 }
