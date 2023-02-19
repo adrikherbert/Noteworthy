@@ -32,19 +32,20 @@ def handle_marshmallow_error(e):
     """
     return jsonify(e.messages), 400
 
-@blueprint.route("/users/add", methods=["POST"])
-def addUser():
-    if not request.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
+# Useless: see 'post' function of UserList class in resources/user.py
+# @blueprint.route("/users/add", methods=["POST"])
+# def addUser():
+#     if not request.is_json:
+#         return jsonify({"msg": "Missing JSON in request"}), 400
 
-    username = request.json.get("username", None)
-    password = request.json.get("password", None)
+#     username = request.json.get("username", None)
+#     password = request.json.get("password", None)
 
-    user = User(username=username, email="example@gmail.com", password=password, active=True)
-    db.session.add(user)
-    db.session.commit()
+#     user = User(username=username, email="example@gmail.com", password=password, active=True)
+#     db.session.add(user)
+#     db.session.commit()
 
-    if not username or not password:
-        return jsonify({"msg": "Missing username or password"}), 400
+#     if not username or not password:
+#         return jsonify({"msg": "Missing username or password"}), 400
 
-    return jsonify({"Message": "Username and Password received"}), 200
+#     return jsonify({"Message": "Username and Password received"}), 200
