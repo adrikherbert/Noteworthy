@@ -10,7 +10,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import './index.css';
+import './popup.css';
 
 const theme = createTheme({
   palette: {
@@ -42,7 +42,7 @@ export default function Login() {
             alignItems: 'center',
           }}
         >
-          <img src={require('./assets/NoteworthyLogoFull.png')} alt="Noteworthy" width="100%" height="100%" />
+          <img src='NoteworthyLogoFull.png' alt="Noteworthy" width="100%" height="100%" />
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
             <TextField
               margin="normal"

@@ -1,0 +1,27 @@
+{
+  "name": "Noteworthy Extension",
+  "description": "Note Taking Made Easy!",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "icons": {
+    "16": "NoteworthyIcon.png",
+    "48": "NoteworthyIcon.png",
+    "128": "NoteworthyIcon.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "React Extension",
+    "default_icon": "NoteworthyIcon.png"
+  },
+  "permissions": ["storage", "contextMenus"],
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentScript.js"]
+    }
+  ]
+}
