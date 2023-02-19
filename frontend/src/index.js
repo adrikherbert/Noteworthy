@@ -1,17 +1,39 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import './page.css';
+
+import { BrowserRouter } from "react-router-dom";
+import {Route, Routes, Link, Navigate } from "react-router-dom";
+import UserHome from "./pages/UserHome";
+import NoPage from "./pages/NoPage";
+import Login from "./pages/Login";
+import CreateAccount from "./pages/CreateAccount";
+import AuthWrapper from "./pages/AuthWrapper";
+
 import reportWebVitals from './reportWebVitals';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+const App = () => {
+
+  return (
+  <BrowserRouter>
+    <>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/createaccount" element={<CreateAccount />} />
+        <Route element={<AuthWrapper />}>
+          <Route exact path="/" element={<Navigate to="/login"/>} />
+          <Route exact path="/home" element={<UserHome />} />
+        </Route>
+        <Route path="*" element={<NoPage />} />
+      </Routes>
+    </>
+  </BrowserRouter>
+  );
+}
+  
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+  
 reportWebVitals();
