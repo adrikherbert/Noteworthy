@@ -1,0 +1,9 @@
+default_context:
+    project_name: "backend"
+    app_name: "server"
+    python_version: "3.8"
+    admin_user_username: "admin"
+    admin_user_email: "adrikbh@gmail.com"
+    admin_user_password: "fe46cd5f3f389afc5b0f984177b42276"
+    use_celery: "no"
+    wsgi_server: "gunicorn"
