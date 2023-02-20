@@ -29,7 +29,11 @@ const CreateAccount = () => {
 
     async function handleSubmit(event){
         event.preventDefault();
-        validate();
+        if(!validate()){
+            return;
+        }
+
+        alert("Successful!");
 
 
         //Make request to check if email is in use
@@ -45,10 +49,12 @@ const CreateAccount = () => {
     };
 
     const validate = () => {
+        let valid = true;
         if(vEmail.test(email)){
             setVEmail(false)
         } else {
             setVEmail(true)
+            valid = false;
         }
 
         if(vPassword.test(password)){
@@ -57,11 +63,14 @@ const CreateAccount = () => {
                 setPMatch(false);
             } else {
                 setPMatch(true);
+                valid = false;
             }
         } else {
             setVPassword(true);
             setPMatch(false);
+            valid = false;
         }
+        return valid;
     };
 
     const togglePassword = () => {
@@ -76,52 +85,68 @@ const CreateAccount = () => {
     return(
         <div className="fullPage">
             <div className="modal">
-                <img src={logo} className="title"/>
-                <h3>Creat Account</h3>
+                <img src={logo} className="logo"/>
+                <p className="title">Create Account</p>
                 <div>
-                   <form onSubmit={handleSubmit}>
-                    <label>Name:<br></br>
+                   <form className="form" onSubmit={handleSubmit}>
+                    <label>Name:<br/>
                         <input 
                             type="text"
                             value={user_name}
                             onChange={(event) => setName(event.target.value)}
-                        /><br></br>
+                            className="input_box"
+                        />
                     </label>
-                    <label>Email:<br></br>
+                    <label>Email:<br/>
                         <input 
                             type="text" 
                             value={email}
                             onChange={(event) => setEmail(event.target.value)}
+                            className="input_box"
                         />
-                        {validEmail && <p>Invalid email!</p>}
-                        {!validEmail && <br></br>}
+                        {validEmail && <p className="invalid_email">
+                            Invalid email!
+                        </p>}
                     </label>
-                    <label>Password:<br></br>
-                        <input 
-                            type={passwordShown ? "text" : "password"}
-                            value={password}
-                            onChange={(event) => setPassword(event.target.value)}
-                        />
-                        <img src={eyeIcon} onClick={togglePassword} className="eye"/>
-                        {/* {passwordShown ? <img src={shown} className="eye"/> : <img src={hidden} className="eye"/>} */}
-                        {validPassword && <p>Invalid Password!</p>}
-                        {!validPassword && <br></br>}
+                    <label >Password:<br/>
+                        <div className="password">
+                            <input 
+                                type={passwordShown ? "text" : "password"}
+                                value={password}
+                                onChange={(event) => setPassword(event.target.value)}
+                                className="input_box"
+                            />
+                            <img src={eyeIcon} onClick={togglePassword} className="eye"/>
+                        </div>
+                        {validPassword && <p className="invalid_password">
+                            Invalid Password! A password must contain:<br/>
+                             - 8 or more characaters<br/>
+                             - An uppercase and lowercase letter<br/>
+                             - A number<br/>
+                             - A special character: @#$%^&+=
+                        </p>}
                     </label>
-                    <label>Re-Type Password:<br></br>
-                        <input 
-                            type={passwordShown ? "text" : "password"}
-                            value={rpassword}
-                            onChange={(event) => setRPassword(event.target.value)}
-                        />
-                        {passwordMatch && <p>Passwords don't match!</p>}
-                        {!passwordMatch && <br></br>}
-                    </label><br></br>
-                    <input type="submit" value="Create Account"/>
+                    
+                    <label>Re-Type Password:<br/>
+                        <div className="password">
+                            <input 
+                                type={passwordShown ? "text" : "password"}
+                                value={rpassword}
+                                onChange={(event) => setRPassword(event.target.value)}
+                                className="input_box"
+                            />
+                            <img src={eyeIcon} onClick={togglePassword} className="eye"/>
+                        </div>
+                        {passwordMatch && <p className="invalid_email">
+                            Passwords don't match!
+                        </p>}
+                    </label>
+                    <input type="submit" value="Create Account" className="button"/>
                     </form> 
                 </div>
                 <div>
-                    <h4>Trying to log in?</h4>
-                    <Link to="/login" >Login instead.</Link>
+                    <p className="try_login">Trying to log in?</p>
+                    <Link to="/login">Login instead.</Link>
                 </div>
             </div>
         </div>
