@@ -8,6 +8,7 @@ services:
     command: gunicorn -b 0.0.0.0:5000 server.wsgi:app
     env_file:
       - ./.flaskenv
+      - ./.env
     environment:
       - DATABASE_URI=sqlite:////db/server.db
     volumes:
