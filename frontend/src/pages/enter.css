@@ -21,17 +21,86 @@
     z-index: 1;
 }
 
-.title {
+.logo {
     display: block;
     width: 100%;
     height: auto;
     margin-left:auto;
     margin-right:auto;
     background-color: transparent;
+    padding: 0;
+}
+
+.title {
+    height: 1.5em;
+    margin-top: 1%;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-left: 0;
+    font-weight: bold;
+    font-size: large;
+    background-color: transparent;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0;
 }
 
 .eye {
     display: block;
     width: 25px;
     height: auto;
+}
+
+.password {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 1%;
+}
+
+.input_box {
+    width: 85%;
+}
+
+.invalid_email {
+    display: flex;
+    border: 1px solid #ee5757;
+    border-radius: 5px;
+    width: 85%;
+    height: 1.5em;
+    margin-top: 1%;
+    margin-bottom: 0;
+    padding-left: 1%; 
+    color: #ee5757;
+    font-size: small;
+}
+
+.invalid_password {
+    display: flex;
+    border: 1px solid #ee5757;
+    border-radius: 5px;
+    width: 85%;
+    height: 7em;
+    margin-top: 1%;
+    margin-bottom: 0;
+    padding-left: 1%; 
+    color: #ee5757;
+    font-size: small;
+}
+
+.try_login {
+    display: flex;
+    /* flex-direction: row; */
+    margin-top: 1%;
+    margin-bottom: 1%;
+    font-weight: bold;
+}
+
+.button {
+    margin-top: 5%;
+    display: block;
+    width: 35%
 }
