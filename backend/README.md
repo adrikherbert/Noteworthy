@@ -15,3 +15,6 @@ After the above, install the proper pip files from the provided requirements.txt
 ```
     pip install -r requirements.txt
 ```
+
+
+The .env file must be set up prior to running this server locally. After you're all set up, run "flask run" and click the URL provided to you in the terminal.
