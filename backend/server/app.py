@@ -21,8 +21,6 @@ def create_app(testing=False):
     if testing is True:
         app.config["TESTING"] = True
 
-    print(app.config)
-
     if app.config["DEBUG"]:
         if os.environ.get("LOCAL_PORT") is None:
             server = open_ssh_tunnel(app)
