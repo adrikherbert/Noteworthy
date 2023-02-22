@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link} from "react-router-dom";
+import { Tooltip } from "@mui/material"
 
 import logo from "../images/NoteworthyBlack.svg";
 import hidden from "../images/EyeHidden.svg";
@@ -116,7 +117,9 @@ const CreateAccount = () => {
                                 onChange={(event) => setPassword(event.target.value)}
                                 className="input_box"
                             />
-                            <img src={eyeIcon} onClick={togglePassword} className="eye"/>
+                            <Tooltip title={passwordShown ? "Hide Password" : "Show Password"} placement="top-start">
+                                <img src={eyeIcon} onClick={togglePassword} className="eye"/>
+                            </Tooltip>
                         </div>
                         {validPassword && <p className="invalid_password">
                             Invalid Password! A password must contain:<br/>
@@ -135,7 +138,9 @@ const CreateAccount = () => {
                                 onChange={(event) => setRPassword(event.target.value)}
                                 className="input_box"
                             />
-                            <img src={eyeIcon} onClick={togglePassword} className="eye"/>
+                            <Tooltip title={passwordShown ? "Hide Password" : "Show Password"} placement="top-start">
+                                <img src={eyeIcon} onClick={togglePassword} className="eye"/>
+                            </Tooltip>
                         </div>
                         {passwordMatch && <p className="invalid_email">
                             Passwords don't match!

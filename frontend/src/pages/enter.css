@@ -54,6 +54,10 @@
     height: auto;
 }
 
+/* .tooltip_eye {
+    placement: right-start;
+} */
+
 .password {
     display: flex;
     flex-direction: row;
