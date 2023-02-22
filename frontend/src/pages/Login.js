@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link } from "react-router-dom";
 
-import logo from "../images/NoteworthyBlack.svg";
+import logo from "../images/NoteworthyBlack2.svg";
 import hidden from "../images/EyeHidden.svg";
 import shown from "../images/EyeOpen.svg";
 
