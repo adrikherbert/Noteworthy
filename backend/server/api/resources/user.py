@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required
 from server.api.schemas import UserSchema
-from server.models import User
+from server.models import UserAccount
 from server.extensions import db
 from server.commons.pagination import paginate
 
@@ -87,12 +87,12 @@ class UserResource(Resource):
 
     def get(self, user_id):
         schema = UserSchema()
-        user = User.query.get_or_404(user_id)
+        user = UserAccount.query.get_or_404(user_id)
         return {"user": schema.dump(user)}
 
     def put(self, user_id):
         schema = UserSchema(partial=True)
-        user = User.query.get_or_404(user_id)
+        user = UserAccount.query.get_or_404(user_id)
         user = schema.load(request.json, instance=user)
 
         db.session.commit()
@@ -100,7 +100,7 @@ class UserResource(Resource):
         return {"msg": "user updated", "user": schema.dump(user)}
 
     def delete(self, user_id):
-        user = User.query.get_or_404(user_id)
+        user = UserAccount.query.get_or_404(user_id)
         db.session.delete(user)
         db.session.commit()
 
@@ -156,7 +156,7 @@ class UserList(Resource):
 
     def get(self):
         schema = UserSchema(many=True)
-        query = User.query
+        query = UserAccount.query
         return paginate(query, schema)
 
     def post(self):

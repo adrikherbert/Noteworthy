@@ -3,7 +3,7 @@ from flask_restful import Api
 from marshmallow import ValidationError
 from server.extensions import apispec
 from server.extensions import db
-from server.models import User
+from server.models import UserAccount
 from server.api.resources import UserResource, UserList
 from server.api.schemas import UserSchema
 

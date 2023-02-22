@@ -1,4 +1,4 @@
-from server.models import User
+from server.models import UserAccount
 from server.extensions import ma, db
 
 
@@ -8,7 +8,7 @@ class UserSchema(ma.SQLAlchemyAutoSchema):
     password = ma.String(load_only=True, required=True)
 
     class Meta:
-        model = User
+        model = UserAccount
         sqla_session = db.session
         load_instance = True
         exclude = ("_password",)

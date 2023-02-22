@@ -3,7 +3,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from server.extensions import db, pwd_context
 
 
-class User(db.Model):
+class UserAccount(db.Model):
     """Basic user model"""
 
     id = db.Column(db.Integer, primary_key=True)

@@ -7,7 +7,7 @@ from flask_jwt_extended import (
     get_jwt,
 )
 
-from server.models import User
+from server.models import UserAccount
 from server.extensions import pwd_context, jwt, apispec
 from server.auth.helpers import revoke_token, is_token_revoked, add_token_to_database
 
@@ -64,7 +64,7 @@ def login():
     if not username or not password:
         return jsonify({"msg": "Missing username or password"}), 400
 
-    user = User.query.filter_by(username=username).first()
+    user = UserAccount.query.filter_by(username=username).first()
     if user is None or not pwd_context.verify(password, user.password):
         return jsonify({"msg": "Bad credentials"}), 400
 
@@ -177,7 +177,7 @@ def revoke_refresh_token():
 @jwt.user_lookup_loader
 def user_loader_callback(jwt_headers, jwt_payload):
     identity = jwt_payload["sub"]
-    return User.query.get(identity)
+    return UserAccount.query.get(identity)
 
 
 @jwt.token_in_blocklist_loader
