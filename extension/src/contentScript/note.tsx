@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { v4 as uuidv4 } from 'uuid';
-
+import SmallNoteIcon from '../static/SmallNoteIcon.svg';
 import { ShadowRoot } from "./ShadowRoot";
 
 const Container = styled.div`
@@ -88,13 +88,16 @@ const Note = () => {
         };
 
         const handleDelete = () => {
-          setNotes((prevNotes) =>
-            prevNotes.reduce(
-              (acc, cv) =>
-                cv.x === note.x && cv.y === note.y ? acc : acc.push(cv) && acc,
-              []
-            )
-          );
+          var result = confirm("Are you sure you want to delete this note?");
+          if (result) {
+            setNotes((prevNotes) =>
+              prevNotes.reduce(
+                (acc, cv) =>
+                  cv.x === note.x && cv.y === note.y ? acc : acc.push(cv) && acc,
+                []
+              )
+            );
+          }
         };
 
         return (
