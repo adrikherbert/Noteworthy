@@ -1,7 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link } from "react-router-dom";
 
-import '../page.css';
+import logo from "../images/NoteworthyBlack.svg";
+import hidden from "../images/EyeHidden.svg";
+import shown from "../images/EyeOpen.svg";
+
+import './enter.css';;
 
 const Login = () => {
     const navigate = useNavigate();
@@ -9,22 +13,31 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    const [correctPass, setCorrectPass] = useState(false);
+    const [validEmail, setValidEmail] = useState(false);
+
+    const [passwordShown, setPShown] = useState(false);
+    const [eyeIcon, setIcon] = useState(hidden)
+
     useEffect(() => { 
         localStorage.setItem("authenticated", "false")
     }, []);
 
     async function handleSubmit(event){
+        event.preventDefault();
         const p = await getUser(email);
         if(p){
+            setValidEmail(false);
             if(p === password){
                 localStorage.setItem("authenticated", true);
                 localStorage.setItem("user_id", id.current);
                 navigate("/home");
             } else {
-                alert("Incorrect password");
+                setCorrectPass(true);
             }
         } else {
-            alert("The email entered does not match any accounts");
+            setValidEmail(true)
+            setCorrectPass(false);
         }
     };
 
@@ -35,27 +48,53 @@ const Login = () => {
         return "password"
     }
 
+    const togglePassword = () => {
+        setPShown(!passwordShown);
+        if(eyeIcon==hidden){
+            setIcon(shown);
+        } else {
+            setIcon(hidden);
+        }
+    }
+
     return(
-        <div>
-            <form onSubmit={handleSubmit}>
-                <label>Email:<br></br>
-                    <input 
-                        type="text" 
-                        value={email}
-                        onChange={(event) => setEmail(event.target.value)}
-                    /><br></br>
-                </label>
-                <label>Password:<br></br>
-                    <input 
-                        type="text"
-                        value={password}
-                        onChange={(event) => setPassword(event.target.value)}
-                    /><br></br>
-                </label><br></br>
-                <input type="submit" value="Submit"/>
-            </form>
-            <h3>Don't have an account?</h3>
-            <Link to="/createaccount" >Create an account</Link>
+        <div className="fullPage">
+            <div className="modal">
+                <img src={logo} className="logo"/>
+                <p className="title">Login</p>
+                <form className="form" onSubmit={handleSubmit}>
+                    <label>Email:<br/>
+                        <input 
+                            type="text" 
+                            value={email}
+                            onChange={(event) => setEmail(event.target.value)}
+                            className="input_box"
+                        />
+                        {validEmail && <p className="invalid_email">
+                            We don't have an account matching that email!
+                        </p>}
+                    </label>
+                    <label>Password:<br/>
+                        <div className="password">
+                            <input 
+                                type={passwordShown ? "text" : "password"}
+                                value={password}
+                                onChange={(event) => setPassword(event.target.value)}
+                                className="input_box"
+                            />
+                            <img src={eyeIcon} onClick={togglePassword} className="eye"/>
+                        </div>
+                        {correctPass && <p className="invalid_email">
+                            Incorrect Password!
+                        </p>}
+                    </label>
+                    <input type="submit" value="Submit" className="button"/>
+                </form>
+                <div>
+                    <p className="try_login">Don't have an account?</p>
+                    <Link to="/createaccount">Create an account.</Link>
+                </div>
+            </div>
         </div>
     )   
 }
