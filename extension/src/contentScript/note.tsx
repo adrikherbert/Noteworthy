@@ -1,36 +1,102 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { v4 as uuidv4 } from 'uuid';
+import { Delete } from '@styled-icons/material/Delete';
+import { Folder } from '@styled-icons/boxicons-solid/Folder';
+import { UserGroup } from '@styled-icons/fa-solid/UserGroup';
+import { Box, TextField } from '@mui/material';
 import SmallNoteIcon from '../static/SmallNoteIcon.svg';
 import { ShadowRoot } from "./ShadowRoot";
+import './note.css';
 
 const Container = styled.div`
   z-index: 2;
   border: 1px solid grey;
   position: absolute;
-  background: white;
+  background: #F3E779;
+  display: grid;
+  grid-template-areas:
+    "title"
+    "text"
+    "footer";
   top: ${(props) => props.y + "px"};
   left: ${(props) => props.x + "px"};
 `;
 
-const Header = styled.div`
+const Footer = styled.div`
   height: 20px;
   background-color: #F3E779;
+  grid-area: footer;
+  margin: 8px;
+  margin-bottom: 16px;
 `;
 
-const StyledButton = styled.button`
-  height: 20px;
+const TitleArea = styled.textarea`
+  color: black;
+  height: 50px;
+  width: 240px;
   border: none;
-  opacity: 0.5;
-  float: right;
+  background-color: #F3E779;
+  resize: none;
+  font-family: 'Roboto', sans-serif;
+  font-size: 20px;
+  font-weight: 500;
+  grid-area: title;
+  margin-left: 8px;
+  margin-right: 8px;
+  margin-top: 16px;
+  outline: none;
+  box-shadow: none;
+  &::placeholder {
+    color: #303030;
+  }
 `;
 
 const StyledTextArea = styled.textarea`
   color: black;
-  height: 200px;
-  width: 200px;
+  height: 150px;
+  width: 240px;
   border: none;
   background-color: #F3E779;
+  resize: none;
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  font-weight: 300;
+  grid-area: text;
+  outline: none;
+  box-shadow: none;
+  margin-left: 8px;
+  margin-right: 8px;
+  &::placeholder {
+    color: #303030;
+  }
+`;
+
+const DeleteIcon = styled(Delete)`
+  color: #303030;
+  height: 25px;
+  width: 25px;
+  float: right;
+  margin: 8px;
+  cursor:pointer;
+`;
+
+const GroupIcon = styled(UserGroup)`
+  color: #303030;
+  height: 25px;
+  width: 25px;
+  float: right;
+  margin: 8px;
+  cursor:pointer;
+`;
+
+const FolderIcon = styled(Folder)`
+  color: #303030;
+  height: 25px;
+  width: 25px;
+  float: right;
+  margin: 8px;
+  cursor:pointer;
 `;
 
 const Note = () => {
@@ -74,7 +140,20 @@ const Note = () => {
   return (
     <div>
       {notes.map((note) => {
-        const handleChange = (e) => {
+        const handleTitleChange = (e) => {
+          const editedText = e.target.value;
+          setNotes((prevNotes) =>
+            prevNotes.reduce(
+              (acc, cv) =>
+                cv.x === note.x && cv.y === note.y && cv.id === note.id
+                  ? acc.push({ ...cv, title: editedText }) && acc
+                  : acc.push(cv) && acc,
+              []
+            )
+          );
+        };
+
+        const handleTextChange = (e) => {
           const editedText = e.target.value;
           setNotes((prevNotes) =>
             prevNotes.reduce(
@@ -104,14 +183,20 @@ const Note = () => {
           <div className="note" key={note.id}>
             <ShadowRoot>
               <Container x={note.x} y={note.y} className="react-sticky-note">
-                <Header>
-                  <StyledButton onClick={handleDelete}>X</StyledButton>
-                </Header>
+                <TitleArea
+                  onChange={handleTitleChange}
+                  value={note.title ? note.title : ""}
+                  placeholder="Note Title Goes Here"
+                />
                 <StyledTextArea
-                  onChange={handleChange}
+                  onChange={handleTextChange}
                   value={note.note ? note.note : ""}
                   key={note.id}
+                  placeholder="Note Text Goes Here"
                 />
+                <Footer>
+                  <DeleteIcon onClick={handleDelete}/> <GroupIcon /> <FolderIcon />
+                </Footer>
               </Container>
             </ShadowRoot>
           </div>
