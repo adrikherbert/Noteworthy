@@ -16,3 +16,5 @@ requests
 sshtunnel
 bcrypt
 psycopg2
+pytest
+pytest_factoryboy
