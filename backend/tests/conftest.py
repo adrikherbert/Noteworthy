@@ -2,7 +2,7 @@ import json
 import pytest
 from dotenv import load_dotenv
 
-from server.models import User
+from server.models import UserAccount
 from server.app import create_app
 from server.extensions import db as _db
 from pytest_factoryboy import register
@@ -14,7 +14,7 @@ register(UserFactory)
 
 @pytest.fixture(scope="session")
 def app():
-    load_dotenv(".testenv")
+    load_dotenv(".env")
     app = create_app(testing=True)
     return app
 
@@ -34,7 +34,7 @@ def db(app):
 
 @pytest.fixture
 def admin_user(db):
-    user = User(
+    user = UserAccount(
         username='admin',
         email='admin@admin.com',
         password='admin'

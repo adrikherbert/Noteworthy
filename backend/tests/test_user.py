@@ -1,7 +1,7 @@
 from flask import url_for
 
 from server.extensions import pwd_context
-from server.models import User
+from server.models import UserAccount
 
 
 def test_get_user(client, db, user, admin_headers):
@@ -63,7 +63,7 @@ def test_delete_user(client, db, user, admin_headers):
     user_url = url_for('api.user_by_id', user_id=user.id)
     rep = client.delete(user_url,  headers=admin_headers)
     assert rep.status_code == 200
-    assert db.session.query(User).filter_by(id=user.id).first() is None
+    assert db.session.query(UserAccount).filter_by(id=user.id).first() is None
 
 
 def test_create_user(client, db, admin_headers):
@@ -80,7 +80,7 @@ def test_create_user(client, db, admin_headers):
     assert rep.status_code == 201
 
     data = rep.get_json()
-    user = db.session.query(User).filter_by(id=data["user"]["id"]).first()
+    user = db.session.query(UserAccount).filter_by(id=data["user"]["id"]).first()
 
     assert user.username == "created"
     assert user.email == "create@mail.com"
