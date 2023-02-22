@@ -1,4 +1,4 @@
-.fullPage {
+.enter_fullPage {
     display: flex;
     /* flex-direction: row; */
     /* flex-wrap: nowrap; */
@@ -8,7 +8,7 @@
     z-index: 0;
 }
 
-.modal {
+.enter_modal {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -21,7 +21,7 @@
     z-index: 1;
 }
 
-.logo {
+.enter_logo {
     display: block;
     width: 100%;
     height: auto;
@@ -31,7 +31,7 @@
     padding: 0;
 }
 
-.title {
+.enter_title {
     height: 1.5em;
     margin-top: 1%;
     margin-bottom: 0;
@@ -42,7 +42,7 @@
     background-color: transparent;
 }
 
-.form {
+.enter_form {
     display: flex;
     flex-direction: column;
     margin-top: 0;
@@ -99,7 +99,7 @@
     font-weight: bold;
 }
 
-.button {
+.submit_button {
     margin-top: 5%;
     display: block;
     width: 35%

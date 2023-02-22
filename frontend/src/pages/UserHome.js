@@ -21,7 +21,7 @@ const UserHome = () => {
 
     return(
         <div className="titleSplit">
-            <div className="title">
+            <div className="titleBar">
                 <h1>User - Home</h1>
             </div>
             <div className="pageContainer"> 
