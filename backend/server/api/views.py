@@ -3,7 +3,7 @@ from flask_restful import Api
 from marshmallow import ValidationError
 from server.extensions import apispec
 from server.extensions import db
-from server.models import UserAccount
+# from server.models import UserAccount
 from server.api.resources import UserResource, UserList
 from server.api.schemas import UserSchema
 
@@ -41,7 +41,7 @@ def handle_marshmallow_error(e):
 #     username = request.json.get("username", None)
 #     password = request.json.get("password", None)
 
-#     user = User(username=username, email="example@gmail.com", password=password, active=True)
+#     user = UserAccount(username=username, email="example@gmail.com", password=password, active=True)
 #     db.session.add(user)
 #     db.session.commit()
 

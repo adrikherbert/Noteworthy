@@ -1,5 +1,5 @@
 import factory
-from server.models import User
+from server.models import UserAccount
 
 
 class UserFactory(factory.Factory):
@@ -9,4 +9,4 @@ class UserFactory(factory.Factory):
     password = "mypwd"
 
     class Meta:
-        model = User
+        model = UserAccount
