@@ -1,4 +1,4 @@
-from server.api.resources.user import UserResource, UserList
+from server.api.resources.user import UserAccountResource, UserAccountList
 
 
-__all__ = ["UserResource", "UserList"]
+__all__ = ["UserAccountResource", "UserAccountList"]

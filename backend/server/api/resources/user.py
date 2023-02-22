@@ -1,13 +1,13 @@
 from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required
-from server.api.schemas import UserSchema
+from server.api.schemas import UserAccountSchema
 from server.models import UserAccount
 from server.extensions import db
 from server.commons.pagination import paginate
 
 
-class UserResource(Resource):
+class UserAccountResource(Resource):
     """Single object resource
 
     ---
@@ -28,7 +28,7 @@ class UserResource(Resource):
               schema:
                 type: object
                 properties:
-                  user: UserSchema
+                  user: UserAccountSchema
         404:
           description: user does not exists
     put:
@@ -45,7 +45,7 @@ class UserResource(Resource):
         content:
           application/json:
             schema:
-              UserSchema
+              UserAccountSchema
       responses:
         200:
           content:
@@ -56,7 +56,7 @@ class UserResource(Resource):
                   msg:
                     type: string
                     example: user updated
-                  user: UserSchema
+                  user: UserAccountSchema
         404:
           description: user does not exists
     delete:
@@ -86,12 +86,12 @@ class UserResource(Resource):
     method_decorators = [jwt_required()]
 
     def get(self, user_id):
-        schema = UserSchema()
+        schema = UserAccountSchema()
         user = UserAccount.query.get_or_404(user_id)
         return {"user": schema.dump(user)}
 
     def put(self, user_id):
-        schema = UserSchema(partial=True)
+        schema = UserAccountSchema(partial=True)
         user = UserAccount.query.get_or_404(user_id)
         user = schema.load(request.json, instance=user)
 
@@ -107,7 +107,7 @@ class UserResource(Resource):
         return {"msg": "user deleted"}
 
 
-class UserList(Resource):
+class UserAccountList(Resource):
     """Creation and get_all
 
     ---
@@ -128,7 +128,7 @@ class UserList(Resource):
                       results:
                         type: array
                         items:
-                          $ref: '#/components/schemas/UserSchema'
+                          $ref: '#/components/schemas/UserAccountSchema'
     post:
       tags:
         - api
@@ -138,7 +138,7 @@ class UserList(Resource):
         content:
           application/json:
             schema:
-              UserSchema
+              UserAccountSchema
       responses:
         201:
           content:
@@ -149,18 +149,18 @@ class UserList(Resource):
                   msg:
                     type: string
                     example: user created
-                  user: UserSchema
+                  user: UserAccountSchema
     """
 
     method_decorators = [jwt_required()]
 
     def get(self):
-        schema = UserSchema(many=True)
+        schema = UserAccountSchema(many=True)
         query = UserAccount.query
         return paginate(query, schema)
 
     def post(self):
-        schema = UserSchema()
+        schema = UserAccountSchema()
         user = schema.load(request.json)
 
         db.session.add(user)

@@ -1,4 +1,4 @@
-from server.api.schemas.user import UserSchema
+from server.api.schemas.user import UserAccountSchema
 
 
-__all__ = ["UserSchema"]
+__all__ = ["UserAccountSchema"]
