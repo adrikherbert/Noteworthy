@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link } from "react-router-dom";
 
-import logo from "../images/NoteworthyBlack.svg";
+import logo from "../images/NoteworthyBlack2.svg";
 import hidden from "../images/EyeHidden.svg";
 import shown from "../images/EyeOpen.svg";
 
@@ -58,11 +58,11 @@ const Login = () => {
     }
 
     return(
-        <div className="fullPage">
-            <div className="modal">
-                <img src={logo} className="logo"/>
-                <p className="title">Login</p>
-                <form className="form" onSubmit={handleSubmit}>
+        <div className="enter_fullPage">
+            <div className="enter_modal">
+                <img src={logo} className="enter_logo"/>
+                <p className="enter_title">Login</p>
+                <form className="enter_form" onSubmit={handleSubmit}>
                     <label>Email:<br/>
                         <input 
                             type="text" 
@@ -88,7 +88,7 @@ const Login = () => {
                             Incorrect Password!
                         </p>}
                     </label>
-                    <input type="submit" value="Submit" className="button"/>
+                    <input type="submit" value="Submit" className="submit_button"/>
                 </form>
                 <div>
                     <p className="try_login">Don't have an account?</p>
