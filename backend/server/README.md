@@ -17,6 +17,18 @@ This is a file to explain the various folders and files within the server, as we
         the proper places. DO NOT name a class the same name as a default PostgreSQL table. This is annoying to fix.
 
 
+**Current directory**
+This is where the server lies
+
+**app.py**
+This is where the Flask app is created.
+
+**config.py**
+
+**manage.py**
+This contains additional Flask CLI commands, custom created.
+
+
 **api/**
 General folder to hold the database-accessing endpoints
 
