@@ -74,12 +74,12 @@ export default function Login() {
             </Button>
             <Grid container>
               <Grid item xs={12}>
-                <Link href="#" variant="body2">
+                <Link href="http://localhost:3000" variant="body2" target="_blank">
                   Forgot password?
                 </Link>
               </Grid>
               <Grid item xs={12}>
-                <Link href="#" variant="body2">
+                <Link href="http://localhost:3000/createaccount" variant="body2" target="_blank">
                   {"Don't have an account? Sign Up"}
                 </Link>
               </Grid>

@@ -6,15 +6,15 @@ from server.models import UserAccount
 from server.app import create_app
 from server.extensions import db as _db
 from pytest_factoryboy import register
-from tests.factories import UserFactory
+from tests.factories import UserAccountFactory
 
 
-register(UserFactory)
+register(UserAccountFactory)
 
 
 @pytest.fixture(scope="session")
 def app():
-    load_dotenv(".env")
+    load_dotenv(".testenv")
     app = create_app(testing=True)
     return app
 
