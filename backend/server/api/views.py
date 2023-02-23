@@ -31,21 +31,3 @@ def handle_marshmallow_error(e):
     correct JSON response with associated HTTP 400 Status (https://tools.ietf.org/html/rfc7231#section-6.5.1)
     """
     return jsonify(e.messages), 400
-
-# Useless: see 'post' function of UserAccountList class in resources/user.py
-# @blueprint.route("/users/add", methods=["POST"])
-# def addUser():
-#     if not request.is_json:
-#         return jsonify({"msg": "Missing JSON in request"}), 400
-
-#     username = request.json.get("username", None)
-#     password = request.json.get("password", None)
-
-#     user = UserAccount(username=username, email="example@gmail.com", password=password, active=True)
-#     db.session.add(user)
-#     db.session.commit()
-
-#     if not username or not password:
-#         return jsonify({"msg": "Missing username or password"}), 400
-
-#     return jsonify({"Message": "Username and Password received"}), 200
