@@ -1,7 +1,5 @@
 .enter_fullPage {
     display: flex;
-    /* flex-direction: row; */
-    /* flex-wrap: nowrap; */
     height: 100vh;
     width: 100vw;
     background-color: #0e6bab;
@@ -13,11 +11,12 @@
     display: flex;
     flex-direction: column;
     margin:auto;
+    box-sizing: border-box;
     background-color: #f3edb3;
     box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.3);
     padding: 3%;
-    width: 20%;
-    height: 50%;
+    width: 25%;
+    height: 60%;
     z-index: 1;
 }
 
@@ -27,8 +26,8 @@
     height: auto;
     margin-left:auto;
     margin-right:auto;
+    margin-bottom: 2%;
     background-color: transparent;
-    padding: 0;
 }
 
 .enter_title {
@@ -67,6 +66,7 @@
 
 .invalid_email {
     display: flex;
+    box-sizing: border-box;
     border: 1px solid #ee5757;
     border-radius: 5px;
     width: 85%;
@@ -80,6 +80,7 @@
 
 .invalid_password {
     display: flex;
+    box-sizing: border-box;
     border: 1px solid #ee5757;
     border-radius: 5px;
     width: 85%;
