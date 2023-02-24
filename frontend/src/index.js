@@ -10,6 +10,7 @@ import NoPage from "./pages/NoPage";
 import Login from "./pages/Login";
 import CreateAccount from "./pages/CreateAccount";
 import AuthWrapper from "./pages/AuthWrapper";
+import Settings from "./pages/Settings";
 
 import reportWebVitals from './reportWebVitals';
 
@@ -25,6 +26,7 @@ const App = () => {
         <Route element={<AuthWrapper />}>
           <Route exact path="/" element={<Navigate to="/login"/>} />
           <Route exact path="/home" element={<UserHome />} />
+          <Route exact path="/settings" element={<Settings />} />
         </Route>
         <Route path="*" element={<NoPage />} />
       </Routes>
