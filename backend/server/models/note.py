@@ -1,15 +1,11 @@
 from server.extensions import db
-from enum import Enum
 
-class AccessType(Enum):
-    PUBLIC = 1
-    PRIVATE = 2
 
 class Note(db.Model):
-    """Basic note model"""
+    """Note model"""
     
     id = db.Column(db.Integer, primary_key=True)
-    collection_id = db.Column(db.Integer, nullable=False) # add db.ForeignKey("collection.id") when collections are made
+    collection_id = db.Column(db.Integer, db.ForeignKey("collection.id"), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user_account.id"), nullable=False)
     access_type = db.Column(db.Integer, nullable=False)
     content = db.Column(db.String(1000), nullable=False)
