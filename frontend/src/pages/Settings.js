@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 
-import Notes from '../components/Notes'
+import './settings.css';
 import '../page.css';
 
-const UserHome = () => {
+const Settings = () => {
     const [id, setId] = useState(null);
     const [email, setEmail] = useState("");
-    const [name, setName] = useState("");
+    const [curr_name, setCName] = useState("");
+    const [new_name, setNName] = useState("");
+    const [old_password, setOPassword] = useState("");
+    const [new_password, setNPassword] = useState("");
 
     const [isLoading, setLoading] = useState(true);
 
@@ -33,20 +36,23 @@ const UserHome = () => {
         );
     }
 
+
     return(
         <div className="titleSplit">
-            <h1 className="titleBar">User - Home</h1>
-            {/* <div className="titleBar">
-                User - Home
-            </div> */}
-            <div className="pageContainer"> 
-                <div className="left">
-                    <h1>My Collections</h1>
+            <div className="titleBar">
+                <h1>Settings</h1>
+            </div>
+            <div className="settings_container"> 
+                <div className="settings_options">
+
                 </div>
-                <Notes user_id={id} />
+                <div className="settings_display">
+
+                </div>
+                
             </div>
         </div>
     )   
 }
 
-export default UserHome;
+export default Settings;
