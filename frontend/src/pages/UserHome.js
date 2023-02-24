@@ -35,9 +35,10 @@ const UserHome = () => {
 
     return(
         <div className="titleSplit">
-            <div className="titleBar">
-                <h1>User - Home</h1>
-            </div>
+            <h1 className="titleBar">User - Home</h1>
+            {/* <div className="titleBar">
+                User - Home
+            </div> */}
             <div className="pageContainer"> 
                 <div className="left">
                     <h1>My Collections</h1>
