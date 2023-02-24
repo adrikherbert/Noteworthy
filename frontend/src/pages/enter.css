@@ -52,6 +52,13 @@
     width: 25px;
     height: auto;
     cursor: pointer;
+    opacity: 1;
+    fill: #858585;
+    transition: opacity 0.25s;
+}
+
+.eye:hover {
+    opacity: 0.5;
 }
 
 .password {
@@ -104,5 +111,6 @@
 .submit_button {
     margin-top: 5%;
     display: block;
-    width: 35%
+    width: 35%;
+    cursor: pointer;
 }

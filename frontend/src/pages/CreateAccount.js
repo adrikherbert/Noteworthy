@@ -2,9 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, Link} from "react-router-dom";
 import { Tooltip } from "@mui/material"
 
+import {ReactComponent as Hidden} from "../images/EyeHidden.svg";
+import {ReactComponent as Shown} from "../images/EyeOpen.svg";
 import logo from "../images/NoteworthyBlack.svg";
-import hidden from "../images/EyeHidden.svg";
-import shown from "../images/EyeOpen.svg";
 
 import UserService from '../services/user.service.js';
 
@@ -21,7 +21,6 @@ const CreateAccount = () => {
     const [validPassword, setVPassword] = useState(false);
     const [passwordMatch, setPMatch] = useState(false);
     const [passwordShown, setPShown] = useState(false);
-    const [eyeIcon, setIcon] = useState(hidden)
 
     const vEmail = RegExp(/^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9]+\.[a-zA-Z0-9]{2,4}$/);
     const vPassword = new RegExp(/^(?=.{8,})(?=.*[a-z])(?=.*[0-9])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/);
@@ -42,11 +41,15 @@ const CreateAccount = () => {
             alert("The email entered is already in use");
         } else {
             const data = { active: true, email: email, password: password, username: user_name };
-            const response = await UserService.create(data);
-            console.log(response);
-            // localStorage.setItem("authenticated", true);
-            // localStorage.setItem("user_id", response.data.user.id); //Change to id returned when user is created
-            // navigate("/home");
+            try {
+                const response = await UserService.create(data);
+                localStorage.setItem("authenticated", true);
+                localStorage.setItem("user_id", response.data.user.id); //Change to id returned when user is created
+                navigate("/home");
+            } catch (error) {
+                console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+                alert("Unable to create an account at this time.")
+            }
         }
     };
 
@@ -77,11 +80,6 @@ const CreateAccount = () => {
 
     const togglePassword = () => {
         setPShown(!passwordShown);
-        if(eyeIcon==hidden){
-            setIcon(shown);
-        } else {
-            setIcon(hidden);
-        }
     }
 
     return(
@@ -119,7 +117,7 @@ const CreateAccount = () => {
                                 className="input_box"
                             />
                             <Tooltip title={passwordShown ? "Hide Password" : "Show Password"} placement="top-start" arrow>
-                                <img src={eyeIcon} onClick={togglePassword} className="eye"/>
+                                {passwordShown ? <Shown onClick={togglePassword} className="eye"/> : <Hidden onClick={togglePassword} className="eye"/>}
                             </Tooltip>
                         </div>
                         {validPassword && <p className="invalid_password">
@@ -140,7 +138,7 @@ const CreateAccount = () => {
                                 className="input_box"
                             />
                             <Tooltip title={passwordShown ? "Hide Password" : "Show Password"} placement="top-start" arrow>
-                                <img src={eyeIcon} onClick={togglePassword} className="eye"/>
+                                {passwordShown ? <Shown onClick={togglePassword} className="eye"/> : <Hidden onClick={togglePassword} className="eye"/>}
                             </Tooltip>
                         </div>
                         {passwordMatch && <p className="invalid_email">

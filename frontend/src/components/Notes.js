@@ -29,9 +29,7 @@ const Notes = ({user_id}) => {
 
     return(
         <div className="notelist_container">
-            <div className="notelist_title">
-                <h1>Notes - {user_id}</h1>
-            </div>
+            <h1 className="notelist_title">Notes - {user_id}</h1>
             <div className="notelist">
                 <ul>
                     {notes.map((data) => 

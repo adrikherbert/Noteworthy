@@ -47,7 +47,10 @@ const Settings = () => {
 
                 </div>
                 <div className="settings_display">
+                    <p className="settings_display_title">Profile</p>
+                    <div className="settings_display_options">
 
+                    </div>
                 </div>
                 
             </div>
