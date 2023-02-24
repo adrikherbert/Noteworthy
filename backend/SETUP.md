@@ -7,13 +7,13 @@ A venv must be created prior to doing anything with the backend. To do this (**w
 
 To run venv on a windows machine (**with cwd as \Noteworthy\backend**):
 ```Powershell
-    Set-ExecutionPolicy -ExecutionPolicy AllSigned -Scope Process
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
     .\venv\Scripts\activate
 ```
 
 If the above doesn't work, do the following (**with cwd as \Noteworthy\backend**):
 ```Powershell
-    Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope Process
+    Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process
     .\venv\Scripts\activate
 ```
 

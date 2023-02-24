@@ -1,8 +1,11 @@
 from flask import Flask
+from flask_cors import CORS
 
 from sshtunnel import SSHTunnelForwarder
 import signal
 import os
+
+import logging
 
 from server import api
 from server import auth
@@ -17,6 +20,8 @@ def create_app(testing=False):
     """Application factory, used to create application"""
     app = Flask("server")
     app.config.from_object("server.config")
+    
+    logging.basicConfig(level=logging.ERROR)
 
     if testing is True:
         app.config["TESTING"] = True
@@ -30,12 +35,12 @@ def create_app(testing=False):
             os.environ["LOCAL_PORT"] = local_port
 
             server.check_tunnels()
-            print(f"Tunnel is Up {server.tunnel_is_up}")
-            print('---------------TUNNEL IS ESTABLISHED----------------')
+            app.logger.info(f"Tunnel is Up {server.tunnel_is_up}")
+            app.logger.info('---------------TUNNEL IS ESTABLISHED----------------')
 
 
             def signal_handler(*_):
-                print("Stopping ssh server.")
+                app.logger.info("Stopping ssh server.")
                 server.stop()
                 exit(0)
 
@@ -67,6 +72,8 @@ def configure_extensions(app: Flask):
     db.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
+
+    CORS(app)
 
 
 def configure_cli(app: Flask):

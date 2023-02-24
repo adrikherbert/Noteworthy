@@ -21,4 +21,6 @@ else:
 DATABASE_PORT = os.environ.get("DATABASE_PORT")
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
+CORS_HEADERS='Content-Type'
+
 SQLALCHEMY_TRACK_MODIFICATIONS = False

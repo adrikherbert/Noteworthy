@@ -5,16 +5,14 @@ flask-migrate
 flask-sqlalchemy
 flask-marshmallow
 flask-jwt-extended
+flask_cors
 marshmallow-sqlalchemy
 python-dotenv
 passlib
 apispec[yaml]
 apispec-webframeworks
-tox
 gunicorn
 requests
 sshtunnel
 bcrypt
 psycopg2
-pytest
-pytest_factoryboy
