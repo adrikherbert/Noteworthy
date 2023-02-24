@@ -35,8 +35,8 @@ General folder to hold the database-accessing endpoints
 **api/resources/**
 Defines resources loaded by the api. Function names are 1:1 with http protocol. This is where endpoints related to DB access are fleshed out.
 
-**api/schemas**
-Database object serialization. It's for Marshmallow. **Look into this more**
+**api/schemas/**
+Define schemas for dumping and loading ORM objects. Using ma.SQLAlchemyAutoSchema auto-generates the schema for serializing database models. The Meta class is used to establish metadata for the schema. You can also use ma.SQLAlchemySchema to manually define schema patterns.
 
 **api/views.py**
 Defines the umbrella blueprint and connects resources to the API. This is the "view" of the application, defining the resources accessible to users of the API.
