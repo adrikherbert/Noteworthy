@@ -5,6 +5,8 @@ from server.extensions import ma, db
 class CollectionSchema(ma.SQLAlchemyAutoSchema):
 
     id = ma.Int(dump_only=True)
+    user_id = ma.Int()
+    parent_id = ma.Int()
 
     class Meta:
         model = Collection
