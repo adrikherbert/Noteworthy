@@ -2,8 +2,10 @@ from flask import Blueprint, current_app, jsonify
 from flask_restful import Api
 from marshmallow import ValidationError
 from server.extensions import apispec
-from server.api.resources import UserAccountResource, UserAccountList
-from server.api.schemas import UserAccountSchema
+from server.extensions import db
+# from server.models import UserAccount
+from server.api.resources import *
+from server.api.schemas import UserAccountSchema, NoteSchema, CollectionSchema
 
 
 blueprint = Blueprint("api", __name__, url_prefix="/api/v1")
@@ -12,6 +14,10 @@ api = Api(blueprint)
 
 api.add_resource(UserAccountResource, "/users/<int:user_id>", endpoint="user_by_id")
 api.add_resource(UserAccountList, "/users", endpoint="users")
+api.add_resource(NoteResource, "/notes/<int:note_id>", endpoint="note_by_id")
+api.add_resource(NoteList, "/notes", endpoint="notes")
+api.add_resource(CollectionResource, "/collections/<int:collection_id>", endpoint="collection_by_id")
+api.add_resource(CollectionList, "/collections", endpoint="collections")
 
 
 @blueprint.before_app_first_request
