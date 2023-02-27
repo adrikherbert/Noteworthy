@@ -1,5 +1,5 @@
 from server.extensions import db
-from sqlalchemy.dialects.postgresql import BYTEA
+from sqlalchemy.dialects.postgresql import VARCHAR
 
 
 class Collection(db.Model):
@@ -10,7 +10,7 @@ class Collection(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user_account.id"), nullable=False)
     access_type = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(60), nullable=False)
-    notes = db.Column(BYTEA, nullable=True)
+    notes = db.Column(VARCHAR, nullable=True)
 
 
     def to_dict(self):

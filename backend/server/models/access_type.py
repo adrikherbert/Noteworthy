@@ -4,9 +4,9 @@ class AccessType(Enum):
     """
     AccessType Enum for privacy settings
 
-    PUBLIC = 1\n
-    PRIVATE = 2
+    PUBLIC = 0\n
+    PRIVATE = 1
     """
     
-    PUBLIC = 1
-    PRIVATE = 2
+    PUBLIC = 0
+    PRIVATE = 1

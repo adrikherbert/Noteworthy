@@ -180,6 +180,4 @@ class CollectionList(Resource):
         db.session.add(collection)
         db.session.commit()
 
-        print(schema.dump(collection))
-
         return {"msg": "collection created", "collection": schema.dump(collection)}, 201
