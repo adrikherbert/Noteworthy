@@ -6,10 +6,84 @@ from server.models import Note
 from server.extensions import db
 from server.commons.pagination import paginate
 
+"""
+TODO: Constrain retrieval, deletion, and modification to owning users
+"""
 
 class NoteResource(Resource):
-    """Setting and retrieving note resources
+    """Retrieve and modify single notes
+
     ---
+    get:
+      tags:
+        - api
+      summary: Get a note
+      description: Get a single note by ID
+      parameters:
+        - in: path
+          name: note_id
+          schema:
+            type: integer
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  note: NoteSchema
+        404:
+          description: note does not exist
+    put:
+      tags:
+        - api
+      summary: Update a note
+      description: Update a single note by ID
+      parameters:
+        - in: path
+          name: note_id
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              NoteSchema
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: note updated
+                  user: NoteSchema
+        404:
+          description: note does not exist
+    delete:
+      tags:
+        - api
+      summary: Delete a note
+      description: Delete a single note by ID
+      parameters:
+        - in: path
+          name: note_id
+          schema:
+            type: integer
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: note deleted
+        404:
+          description: note does not exist
     """
 
     method_decorators = [jwt_required()]
@@ -42,8 +116,48 @@ class NoteResource(Resource):
     
 
 class NoteList(Resource):
-    """Note creation and get_all
+    """Creation and get_all
+
     ---
+    get:
+      tags:
+        - api
+      summary: Get a list of notes
+      description: Get a list of paginated notes
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PaginatedResult'
+                  - type: object
+                    properties:
+                      results:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/NoteSchema'
+    post:
+      tags:
+        - api
+      summary: Create a note
+      description: Create a new note
+      requestBody:
+        content:
+          application/json:
+            schema:
+              NoteSchema
+      responses:
+        201:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: note created
+                  note: NoteSchema
     """
 
     method_decorators = [jwt_required()]

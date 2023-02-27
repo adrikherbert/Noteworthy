@@ -23,8 +23,14 @@ api.add_resource(CollectionList, "/collections", endpoint="collections")
 @blueprint.before_app_first_request
 def register_views():
     apispec.spec.components.schema("UserAccountSchema", schema=UserAccountSchema)
+    apispec.spec.components.schema("NoteSchema", schema=NoteSchema)
+    apispec.spec.components.schema("CollectionSchema", schema=CollectionSchema)
     apispec.spec.path(view=UserAccountResource, app=current_app)
     apispec.spec.path(view=UserAccountList, app=current_app)
+    apispec.spec.path(view=NoteResource, app=current_app)
+    apispec.spec.path(view=NoteList, app=current_app)
+    apispec.spec.path(view=CollectionResource, app=current_app)
+    apispec.spec.path(view=CollectionList, app=current_app)
 
 
 @blueprint.errorhandler(ValidationError)
