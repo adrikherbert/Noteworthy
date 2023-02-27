@@ -31,11 +31,15 @@ class CollectionResource(Resource):
 
         return {"msg": "collection updated", "collection": schema.dump(collection)}
 
-    """
+    
     def delete(self, collection_id):
         # delete a collection
-        return
-    """
+        collection = Collection.query.get_or_404(collection_id)
+        db.session.delete(collection)
+        db.session.commit()
+
+        return {"msg": "user deleted"}
+    
 
 class CollectionList(Resource):
     """Collection creation and get_all
@@ -44,11 +48,15 @@ class CollectionList(Resource):
 
     method_decorators = [jwt_required()]
 
-    """
     def get(self):
-        # get all collections / from user / from group
-        return
-    """
+        """
+        Edit to query for all collections from a specific user / resource
+        *** Currently queries for all collections
+        """
+        schema = CollectionSchema(many=True)
+        query = Collection.query
+        return paginate(query, schema)
+
 
     def post(self):
         schema = CollectionSchema()

@@ -31,11 +31,15 @@ class NoteResource(Resource):
 
         return {"msg": "note updated", "note": schema.dump(note)}
 
-    """
-    def delete(self, user_id):
+    
+    def delete(self, note_id):
         # delete a note
-        return
-    """
+        note = Note.query.get_or_404(note_id)
+        db.session.delete(note)
+        db.session.commit()
+
+        return {"msg": "note deleted"}
+    
 
 class NoteList(Resource):
     """Note creation and get_all
@@ -44,11 +48,22 @@ class NoteList(Resource):
 
     method_decorators = [jwt_required()]
 
-    """
+    
     def get(self):
-        # get all notes / from user / from resource
-        return
-    """
+        """
+        Edit to query for all notes from a specific user / resource
+        *** Currently queries for all notes
+
+        idea: /notes/<string:resource>/<int:resource_id>
+        """
+        schema = NoteSchema(many=True)
+        user_id = request.json['user_id']
+        print(user_id)
+
+        query = Note.query.filter_by(user_id=user_id)
+
+        return paginate(query, schema)
+    
 
     def post(self):
         schema = NoteSchema()
