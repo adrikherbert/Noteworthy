@@ -83,7 +83,7 @@ const Login = () => {
                                 onChange={(event) => setPassword(event.target.value)}
                                 className="input_box"
                             />
-                            <Tooltip title={passwordShown ? "Hide Password" : "Show Password"} placement="top-start">
+                            <Tooltip title={passwordShown ? "Hide Password" : "Show Password"} placement="top-start" arrow>
                                 <img src={eyeIcon} onClick={togglePassword} className="eye"/>
                             </Tooltip> 
                         </div>

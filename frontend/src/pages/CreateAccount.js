@@ -6,6 +6,8 @@ import logo from "../images/NoteworthyBlack.svg";
 import hidden from "../images/EyeHidden.svg";
 import shown from "../images/EyeOpen.svg";
 
+import UserService from '../services/user.service.js';
+
 import './enter.css';
 
 const CreateAccount = () => {
@@ -34,19 +36,18 @@ const CreateAccount = () => {
             return;
         }
 
-        alert("Successful!");
 
-
-        //Make request to check if email is in use
-        // if(false){ //Check if true
-        //     alert("The email entered is already in use");
-        // } else {
-        //     const data = { user_name: user_name, email: email, password: password };
-        //     //make request to make a new user
-        //     localStorage.setItem("authenticated", true);
-        //     localStorage.setItem("user_id", 1); //Change to id returned when user is created
-        //     navigate("/home");
-        // }
+        // Make request to check if email is in use
+        if(false){ //Check if true
+            alert("The email entered is already in use");
+        } else {
+            const data = { active: true, email: email, password: password, username: user_name };
+            const response = await UserService.create(data);
+            console.log(response);
+            // localStorage.setItem("authenticated", true);
+            // localStorage.setItem("user_id", response.data.user.id); //Change to id returned when user is created
+            // navigate("/home");
+        }
     };
 
     const validate = () => {
@@ -117,7 +118,7 @@ const CreateAccount = () => {
                                 onChange={(event) => setPassword(event.target.value)}
                                 className="input_box"
                             />
-                            <Tooltip title={passwordShown ? "Hide Password" : "Show Password"} placement="top-start">
+                            <Tooltip title={passwordShown ? "Hide Password" : "Show Password"} placement="top-start" arrow>
                                 <img src={eyeIcon} onClick={togglePassword} className="eye"/>
                             </Tooltip>
                         </div>
@@ -138,7 +139,7 @@ const CreateAccount = () => {
                                 onChange={(event) => setRPassword(event.target.value)}
                                 className="input_box"
                             />
-                            <Tooltip title={passwordShown ? "Hide Password" : "Show Password"} placement="top-start">
+                            <Tooltip title={passwordShown ? "Hide Password" : "Show Password"} placement="top-start" arrow>
                                 <img src={eyeIcon} onClick={togglePassword} className="eye"/>
                             </Tooltip>
                         </div>
