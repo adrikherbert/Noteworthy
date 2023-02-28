@@ -174,10 +174,11 @@ class CollectionList(Resource):
 
     def post(self):
         schema = CollectionSchema()
-        
         collection = schema.load(request.json)
 
         db.session.add(collection)
         db.session.commit()
+
+        print(schema.fields)
 
         return {"msg": "collection created", "collection": schema.dump(collection)}, 201
