@@ -1,7 +1,7 @@
 from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required
-from server.api.schemas import NoteSchema
+from server.api.schemas import NoteSchema, LocationSchema
 from server.models import Note
 from server.extensions import db
 from server.commons.pagination import paginate
@@ -146,7 +146,38 @@ class NoteList(Resource):
         content:
           application/json:
             schema:
-              NoteSchema
+              type: object
+              properties:
+                note:
+                  type: object
+                  properties:
+                    user_id:
+                      type: integer
+                      example: 1
+                    collection_id:
+                      type: integer
+                      example: 1
+                    access_type:
+                      type: integer
+                      example: 0
+                    content:
+                      type: string
+                      example: example content
+                    title:
+                      type: string
+                      example: example title
+                    comments:
+                      type: array
+                      example: ["comment 1", "comment 2", "comment 3"]
+                location:
+                  type: object
+                  properties:
+                    url:
+                      type: string
+                      example: https://example.com
+                    coords:
+                      type: array
+                      example: [0, 0]
       responses:
         201:
           content:
@@ -180,10 +211,36 @@ class NoteList(Resource):
     
 
     def post(self):
-        schema = NoteSchema()
-        note = schema.load(request.json)
+        # Define Note and Location Schemas
+        note_schema = NoteSchema()
+        location_schema = LocationSchema()
 
+        # Get note and location JSON from request
+        note = request.json.get("note")
+        location = request.json.get("location")
+
+        # Load note into schema and commit
+        note = note_schema.load(note)
         db.session.add(note)
         db.session.commit()
 
-        return {"msg": "note created", "note": schema.dump(note)}, 201
+        # Get note_id from note.id in db, add to location
+        note_id = note_schema.dump(note).get("id")
+        location = request.json.get("location")
+        location["note_id"] = note_id
+        location = location_schema.load(location)
+
+        # Commit location with note_id to db
+        db.session.add(location)
+        db.session.commit()
+
+        # Update note.location in db with location.id
+        note_schema = NoteSchema(partial=True)
+        location_id = location_schema.dump(location).get("id")
+        location_id = {"location": location_id}
+        note = note_schema.load(location_id, instance=note)
+
+        # Commit db session
+        db.session.commit()
+
+        return {"msg": "note created", "note": note_schema.dump(note), "location": location_schema.dump(location)}, 201
