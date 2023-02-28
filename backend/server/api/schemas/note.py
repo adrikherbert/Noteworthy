@@ -8,7 +8,7 @@ class NoteSchema(ma.SQLAlchemyAutoSchema):
     id = ma.Int(dump_only=True)
     collection_id = ma.Int()
     user_id = ma.Int()
-    location = ma.Nested(LocationSchema)
+    location = ma.Int()
 
     class Meta:
         model = Note
