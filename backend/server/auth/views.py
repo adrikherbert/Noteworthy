@@ -20,6 +20,7 @@ from server.auth.helpers import revoke_token, is_token_revoked, add_token_to_dat
 
 blueprint = Blueprint("auth", __name__, url_prefix="/auth")
 
+
 @blueprint.after_app_request
 def refresh_expiring_jwts(response):
     try:
@@ -62,16 +63,10 @@ def login():
       responses:
         200:
           content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  access_token:
-                    type: string
-                    example: myaccesstoken
-                  refresh_token:
-                    type: string
-                    example: myrefreshtoken
+            headers:
+              Set-Cookie: access_token_cookie
+              Set-Cookie: csrf_access_token
+          description: login successful
         400:
           description: bad request
       security: []
@@ -126,7 +121,7 @@ def revoke_access_token():
     user_identity = get_jwt_identity()
     revoke_token(jti, user_identity)
 
-    response = jsonify({"message": "token revoked"})
+    response = jsonify({"msg": "token revoked"})
     unset_jwt_cookies(response)
     return response, 200
 
@@ -145,5 +140,4 @@ def check_if_token_revoked(jwt_headers, jwt_payload):
 @blueprint.before_app_first_request
 def register_views():
     apispec.spec.path(view=login, app=app)
-    apispec.spec.path(view=refresh, app=app)
     apispec.spec.path(view=revoke_access_token, app=app)
