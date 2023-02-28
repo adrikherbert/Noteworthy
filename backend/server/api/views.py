@@ -5,7 +5,7 @@ from server.extensions import apispec
 from server.extensions import db
 # from server.models import UserAccount
 from server.api.resources import *
-from server.api.schemas import UserAccountSchema, NoteSchema, CollectionSchema
+from server.api.schemas import UserAccountSchema, NoteSchema, CollectionSchema, LocationSchema
 
 
 blueprint = Blueprint("api", __name__, url_prefix="/api/v1")
@@ -25,6 +25,7 @@ def register_views():
     apispec.spec.components.schema("UserAccountSchema", schema=UserAccountSchema)
     apispec.spec.components.schema("NoteSchema", schema=NoteSchema)
     apispec.spec.components.schema("CollectionSchema", schema=CollectionSchema)
+    apispec.spec.components.schema("LocationSchema", schema=LocationSchema)
     apispec.spec.path(view=UserAccountResource, app=current_app)
     apispec.spec.path(view=UserAccountList, app=current_app)
     apispec.spec.path(view=NoteResource, app=current_app)

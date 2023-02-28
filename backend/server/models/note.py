@@ -1,5 +1,5 @@
 from server.extensions import db
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.dialects.postgresql import ARRAY, JSON
 
 
 class Note(db.Model):
@@ -12,8 +12,8 @@ class Note(db.Model):
     content = db.Column(db.String(1000), nullable=False)
     title = db.Column(db.String(60), nullable=False)
     comments = db.Column(ARRAY(db.String(1000)), nullable=True)
-    # How do we store Location?
-    # How do we store Reactions?
+    reactions = db.Column(ARRAY(db.Integer), nullable=True)
+    location = db.Column(JSON, nullable=False)
 
     def to_dict(self):
         return {
