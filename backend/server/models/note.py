@@ -1,4 +1,5 @@
 from server.extensions import db
+from sqlalchemy.dialects.postgresql import ARRAY
 
 
 class Note(db.Model):
@@ -10,9 +11,9 @@ class Note(db.Model):
     access_type = db.Column(db.Integer, nullable=False)
     content = db.Column(db.String(1000), nullable=False)
     title = db.Column(db.String(60), nullable=False)
+    comments = db.Column(ARRAY(db.String(1000)), nullable=True)
     # How do we store Location?
     # How do we store Reactions?
-    # How do we store Comments?
 
     def to_dict(self):
         return {
@@ -22,4 +23,5 @@ class Note(db.Model):
             "access_type": self.access_type,
             "content": self.content,
             "title": self.title,
+            "comments": self.comments
         }
