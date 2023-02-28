@@ -11,6 +11,8 @@ from server.models import UserAccount
 from server.extensions import pwd_context, jwt, apispec
 from server.auth.helpers import revoke_token, is_token_revoked, add_token_to_database
 
+# TODO: Store JWTs in httpOnly cookie
+# https://blog.logrocket.com/jwt-authentication-best-practices/#tl-dr-what-are-they-good-for
 
 blueprint = Blueprint("auth", __name__, url_prefix="/auth")
 
