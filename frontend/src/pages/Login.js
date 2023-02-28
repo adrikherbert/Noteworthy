@@ -3,8 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { Tooltip } from "@mui/material"
 
 import logo from "../images/NoteworthyBlack.svg";
-import hidden from "../images/EyeHidden.svg";
-import shown from "../images/EyeOpen.svg";
+import {ReactComponent as Hidden} from "../images/EyeHidden.svg";
+import {ReactComponent as Shown} from "../images/EyeOpen.svg";
 
 import './enter.css';;
 
@@ -18,7 +18,6 @@ const Login = () => {
     const [validEmail, setValidEmail] = useState(false);
 
     const [passwordShown, setPShown] = useState(false);
-    const [eyeIcon, setIcon] = useState(hidden)
 
     useEffect(() => { 
         localStorage.setItem("authenticated", "false")
@@ -51,11 +50,6 @@ const Login = () => {
 
     const togglePassword = () => {
         setPShown(!passwordShown);
-        if(eyeIcon==hidden){
-            setIcon(shown);
-        } else {
-            setIcon(hidden);
-        }
     }
 
     return(
@@ -84,8 +78,8 @@ const Login = () => {
                                 className="input_box"
                             />
                             <Tooltip title={passwordShown ? "Hide Password" : "Show Password"} placement="top-start" arrow>
-                                <img src={eyeIcon} onClick={togglePassword} className="eye"/>
-                            </Tooltip> 
+                                {passwordShown ? <Shown onClick={togglePassword} className="eye"/> : <Hidden onClick={togglePassword} className="eye"/>}
+                            </Tooltip>
                         </div>
                         {correctPass && <p className="invalid_email">
                             Incorrect Password!

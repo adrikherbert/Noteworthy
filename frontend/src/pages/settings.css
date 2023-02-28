@@ -52,3 +52,19 @@
     border: 1px solid #ccc;
     background-color: #ffffff;
 }
+
+.settings_display_title {
+    display: flex;
+    height: 10%;
+    border: 1px solid #ccc;
+    margin: -1px;
+    padding-left: 3%;
+    font-size: 1.5em;
+    align-items: center;
+}
+
+.settings_display_options {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+}
