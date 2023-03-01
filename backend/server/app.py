@@ -73,7 +73,7 @@ def configure_extensions(app: Flask):
     jwt.init_app(app)
     migrate.init_app(app, db)
 
-    CORS(app)
+    CORS(app, origins=["http://localhost:3000"], expose_headers="Set-Cookie", supports_credentials=True)
 
 
 def configure_cli(app: Flask):

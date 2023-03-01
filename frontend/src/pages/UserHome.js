@@ -24,14 +24,16 @@ const UserHome = () => {
         //API request to get user based on id
         try {
             const response = await UserService.get(uid);
+            console.log(response);
         } catch (error) {
-            console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+            console.log(error);
+            console.log("Error Code " + error.code + ": " + error.msg);
             alert("Unable to load data at this time.")
         }
 
         //set name and email
-        setName("Quin")
-        setEmail("quin@gmail.com")
+        // setName("Quin")
+        // setEmail("quin@gmail.com")
         setLoading(false);
     }
 
