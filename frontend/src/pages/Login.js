@@ -6,6 +6,8 @@ import logo from "../images/NoteworthyBlack.svg";
 import {ReactComponent as Hidden} from "../images/EyeHidden.svg";
 import {ReactComponent as Shown} from "../images/EyeOpen.svg";
 
+import UserService from '../services/user.service.js';
+
 import './enter.css';;
 
 const Login = () => {
@@ -42,8 +44,15 @@ const Login = () => {
     };
 
     async function getUser(email) {
-        //API call to get user
-        //get and return user's password
+        try {
+            const response = await UserService.get(email);
+            localStorage.setItem("authenticated", true);
+            localStorage.setItem("user_id", response.data.user.id); //Change to id returned when user is created
+            navigate("/home");
+        } catch (error) {
+            console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+            alert("Unable to login at this time.")
+        }
         id.current = 1;
         return "password"
     }
