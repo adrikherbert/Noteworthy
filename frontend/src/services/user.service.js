@@ -29,7 +29,7 @@ class UserService {
   }
 
   update(id, data) {
-    return axios.put(userBaseURL + '/' + id, data);
+    return getAxios().put(userBaseURL + '/' + id, data);
   }
 
   delete(id) {

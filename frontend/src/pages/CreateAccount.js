@@ -34,17 +34,6 @@ const CreateAccount = () => {
         if(!validate()){
             return;
         }
-
-        // Make request to check if email is in use
-        // const email_data = { resource: "email", constraint: email}
-        // try {
-        //     const email_response = await UserService.checkEmail(email_data);
-        // } catch (error) {
-        //     console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
-        //     alert("Unable to create an account at this time.");
-        //     return;
-        // }
-        
         
         const data = { active: true, email: email, password: password, username: user_name };
         try {
@@ -57,15 +46,21 @@ const CreateAccount = () => {
                 localStorage.setItem("user_id", login_response.data.id); //Change to id returned when user is created
                 navigate("/home");
             } catch (error) {
-                console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+                if(error.response?.status){
+                    console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+                } else {
+                    console.log(error);
+                }
                 alert("Unable to login at this time.")
             }
         } catch (error) {
-            console.log(error)
-            console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+            if(error.response?.status){
+                console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+            } else {
+                console.log(error);
+            }
             alert("Unable to create an account at this time.")
         }
-
     };
 
     const validate = () => {
