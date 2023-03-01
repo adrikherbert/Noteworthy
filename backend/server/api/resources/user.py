@@ -116,6 +116,18 @@ class UserAccountList(Resource):
         - api
       summary: Get a list of users
       description: Get a list of paginated users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resource:
+                  type: string
+                  example: email
+                constraint:
+                  type: any
+                  example: example@example.com
       responses:
         200:
           content:

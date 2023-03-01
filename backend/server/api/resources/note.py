@@ -124,6 +124,18 @@ class NoteList(Resource):
         - api
       summary: Get a list of notes
       description: Get a list of paginated notes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resource:
+                  type: string
+                  example: title
+                constraint:
+                  type: any
+                  example: example title
       responses:
         200:
           content:
