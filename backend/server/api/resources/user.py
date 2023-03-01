@@ -116,6 +116,18 @@ class UserAccountList(Resource):
         - api
       summary: Get a list of users
       description: Get a list of paginated users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                resource:
+                  type: string
+                  example: email
+                constraint:
+                  type: any
+                  example: example@example.com
       responses:
         200:
           content:
@@ -154,8 +166,32 @@ class UserAccountList(Resource):
 
     @jwt_required()
     def get(self):
+        """
+        Query for a user list by resource
+        """
         schema = UserAccountSchema(many=True)
-        query = UserAccount.query
+        resource = request.json['resource']
+
+        query = 0
+
+        if resource == 'id':
+            constraint = request.json['constraint']
+            query = UserAccount.query.filter_by(id=constraint)
+        elif resource == 'username':
+            constraint = request.json['constraint']
+            query = UserAccount.query.filter_by(username=constraint)
+        elif resource == 'email':
+            constraint = request.json['constraint']
+            query = UserAccount.query.filter_by(email=constraint)
+        elif resource == 'active':
+            constraint = request.json['constraint']
+            query = UserAccount.query.filter_by(active=constraint)
+        elif resource == 'none':
+            query = UserAccount.query
+        else:
+            return {"msg": "invalid resource"}, 404
+        
+
         return paginate(query, schema)
 
     def post(self):
