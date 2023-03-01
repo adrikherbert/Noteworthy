@@ -1,8 +1,9 @@
-from flask import Blueprint, current_app, jsonify
+from flask import Blueprint, current_app, jsonify, request
 from flask_restful import Api
+from flask_jwt_extended import get_jwt, get_jwt_identity
 from marshmallow import ValidationError
 from server.extensions import apispec
-from server.extensions import db
+# from server.extensions import db
 # from server.models import UserAccount
 from server.api.resources import *
 from server.api.schemas import UserAccountSchema, NoteSchema, CollectionSchema, LocationSchema
@@ -32,6 +33,14 @@ def register_views():
     apispec.spec.path(view=NoteList, app=current_app)
     apispec.spec.path(view=CollectionResource, app=current_app)
     apispec.spec.path(view=CollectionList, app=current_app)
+
+
+@blueprint.before_request
+def block_touch_other_users():
+    if request.method in ["POST", "PUT", "PATCH", "DELETE"]:
+        user_id = get_jwt_identity()
+        if request.json.get("user_id", None) and request.json["user_id"] != user_id:
+            return jsonify({"msg": "You cannot touch other users"}), 403
 
 
 @blueprint.errorhandler(ValidationError)
