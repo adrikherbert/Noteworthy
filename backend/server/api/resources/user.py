@@ -161,18 +161,23 @@ class UserAccountList(Resource):
         """
         schema = UserAccountSchema(many=True)
         resource = request.json['resource']
-        constraint = request.json['constraint']
 
         query = 0
 
         if resource == 'id':
+            constraint = request.json['constraint']
             query = UserAccount.query.filter_by(id=constraint)
         elif resource == 'username':
+            constraint = request.json['constraint']
             query = UserAccount.query.filter_by(username=constraint)
         elif resource == 'email':
+            constraint = request.json['constraint']
             query = UserAccount.query.filter_by(email=constraint)
         elif resource == 'active':
+            constraint = request.json['constraint']
             query = UserAccount.query.filter_by(active=constraint)
+        elif resource == 'none':
+            query = UserAccount.query
         else:
             return {"msg": "invalid resource"}, 404
         

@@ -165,25 +165,29 @@ class CollectionList(Resource):
     def get(self):
         """
         Query for a user list by resource
-
-        TODO: Add option for no resource (get_all)
         """
         schema = CollectionSchema(many=True)
         resource = request.json['resource']
-        constraint = request.json['constraint']
 
         query = 0
 
         if resource == 'id':
+            constraint = request.json['constraint']
             query = Collection.query.filter_by(id=constraint)
         elif resource == 'parent_id':
+            constraint = request.json['constraint']
             query = Collection.query.filter_by(parent_id=constraint)
         elif resource == 'user_id':
+            constraint = request.json['constraint']
             query = Collection.query.filter_by(user_id=constraint)
         elif resource == 'access_type':
+            constraint = request.json['constraint']
             query = Collection.query.filter_by(access_type=constraint)
         elif resource == 'title':
+            constraint = request.json['constraint']
             query = Collection.query.filter_by(title=constraint)
+        elif resource == 'none':
+            query = Collection.query
         else:
             return {"msg": "invalid resource"}, 404
         
