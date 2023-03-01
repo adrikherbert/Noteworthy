@@ -211,35 +211,38 @@ class NoteList(Resource):
         Query for a note list by resource
         """
         schema = NoteSchema(many=True)
-        resource = request.json['resource']
-
         query = 0
 
-        if resource == 'id':
-            constraint = request.json['constraint']
-            query = Note.query.filter_by(id=constraint)
-        elif resource == 'collection_id':
-            constraint = request.json['constraint']
-            query = Note.query.filter_by(collection_id=constraint)
-        elif resource == 'user_id':
-            constraint = request.json['constraint']
-            query = Note.query.filter_by(user_id=constraint)
-        elif resource == 'access_type':
-            constraint = request.json['constraint']
-            query = Note.query.filter_by(access_type=constraint)
-        elif resource == 'content':
-            constraint = request.json['constraint']
-            query = Note.query.filter_by(content=constraint)
-        elif resource == 'title':
-            constraint = request.json['constraint']
-            query = Note.query.filter_by(title=constraint)
-        elif resource == 'location':
-            constraint = request.json['constraint']
-            query = Note.query.filter_by(location=constraint)
-        elif resource == 'none':
+        if not request.json:
             query = Note.query
         else:
-            return {"msg": "invalid resource"}, 404
+            resource = request.json['resource']
+
+            if resource == 'id':
+                constraint = request.json['constraint']
+                query = Note.query.filter_by(id=constraint)
+            elif resource == 'collection_id':
+                constraint = request.json['constraint']
+                query = Note.query.filter_by(collection_id=constraint)
+            elif resource == 'user_id':
+                constraint = request.json['constraint']
+                query = Note.query.filter_by(user_id=constraint)
+            elif resource == 'access_type':
+                constraint = request.json['constraint']
+                query = Note.query.filter_by(access_type=constraint)
+            elif resource == 'content':
+                constraint = request.json['constraint']
+                query = Note.query.filter_by(content=constraint)
+            elif resource == 'title':
+                constraint = request.json['constraint']
+                query = Note.query.filter_by(title=constraint)
+            elif resource == 'location':
+                constraint = request.json['constraint']
+                query = Note.query.filter_by(location=constraint)
+            elif resource == 'none':
+                query = Note.query
+            else:
+                return {"msg": "invalid resource"}, 404
         
 
         return paginate(query, schema)
