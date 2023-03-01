@@ -154,8 +154,29 @@ class UserAccountList(Resource):
 
     @jwt_required()
     def get(self):
+        """
+        Query for a user list by resource
+
+        TODO: Add option for no resource (get_all)
+        """
         schema = UserAccountSchema(many=True)
-        query = UserAccount.query
+        resource = request.json['resource']
+        constraint = request.json['constraint']
+
+        query = 0
+
+        if resource == 'id':
+            query = UserAccount.query.filter_by(id=constraint)
+        elif resource == 'username':
+            query = UserAccount.query.filter_by(username=constraint)
+        elif resource == 'email':
+            query = UserAccount.query.filter_by(email=constraint)
+        elif resource == 'active':
+            query = UserAccount.query.filter_by(active=constraint)
+        else:
+            return {"msg": "invalid resource"}, 404
+        
+
         return paginate(query, schema)
 
     def post(self):

@@ -196,16 +196,33 @@ class NoteList(Resource):
     
     def get(self):
         """
-        Edit to query for all notes from a specific user / resource
-        *** Currently queries for all notes
+        Query for a note list by resource
 
-        idea: /notes/<string:resource>/<int:resource_id>
+        TODO: Add option for no resource (get_all)
         """
         schema = NoteSchema(many=True)
-        user_id = request.json['user_id']
-        print(user_id)
+        resource = request.json['resource']
+        constraint = request.json['constraint']
 
-        query = Note.query.filter_by(user_id=user_id)
+        query = 0
+
+        if resource == 'id':
+            query = Note.query.filter_by(id=constraint)
+        elif resource == 'collection_id':
+            query = Note.query.filter_by(collection_id=constraint)
+        elif resource == 'user_id':
+            query = Note.query.filter_by(user_id=constraint)
+        elif resource == 'access_type':
+            query = Note.query.filter_by(access_type=constraint)
+        elif resource == 'content':
+            query = Note.query.filter_by(content=constraint)
+        elif resource == 'title':
+            query = Note.query.filter_by(title=constraint)
+        elif resource == 'location':
+            query = Note.query.filter_by(location=constraint)
+        else:
+            return {"msg": "invalid resource"}, 404
+        
 
         return paginate(query, schema)
     

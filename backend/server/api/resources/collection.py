@@ -164,11 +164,30 @@ class CollectionList(Resource):
 
     def get(self):
         """
-        Edit to query for all collections from a specific user / resource
-        *** Currently queries for all collections
+        Query for a user list by resource
+
+        TODO: Add option for no resource (get_all)
         """
         schema = CollectionSchema(many=True)
-        query = Collection.query
+        resource = request.json['resource']
+        constraint = request.json['constraint']
+
+        query = 0
+
+        if resource == 'id':
+            query = Collection.query.filter_by(id=constraint)
+        elif resource == 'parent_id':
+            query = Collection.query.filter_by(parent_id=constraint)
+        elif resource == 'user_id':
+            query = Collection.query.filter_by(user_id=constraint)
+        elif resource == 'access_type':
+            query = Collection.query.filter_by(access_type=constraint)
+        elif resource == 'title':
+            query = Collection.query.filter_by(title=constraint)
+        else:
+            return {"msg": "invalid resource"}, 404
+        
+
         return paginate(query, schema)
 
 
