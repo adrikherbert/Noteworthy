@@ -9,16 +9,11 @@ console.log('background running');
 chrome.contextMenus.onClicked.addListener(menuItemClicked);
 
 function menuItemClicked(info, tab) {
-  let msg;
-  info.selectionText ? msg = {
-    info: info,
-    tab: tab,
-    txt: "HTML"
-  } : msg = {
+  let msg =
+  {
     info: info,
     tab: tab,
     txt: "Note"
-  };
-  console.log(msg);
+  }
   chrome.tabs.sendMessage(tab.id, msg);
 }
