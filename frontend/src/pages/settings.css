@@ -125,3 +125,15 @@
     margin-top: auto;
     margin-bottom: auto;
 }
+
+.settings_option_delete {
+    display: flex;
+    width: 60%;
+    height:50%;
+    padding-left:1%;
+    margin-top: auto;
+    margin-bottom: auto;
+    color: red;
+    text-decoration: underline;
+    cursor: pointer;
+}

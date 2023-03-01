@@ -27,17 +27,17 @@ const Settings = () => {
         //API request to get user based on id
         try {
             const response = await UserService.get(uid);
+            setCName(response.data.user.username);
+            setEmail(response.data.user.email);
+            setLoading(false);
         } catch (error) {
-            console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+            if(error.response?.status){
+                console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+            } else {
+                console.log(error);
+            }
             alert("Unable to load data at this time.")
-            setLoading(true)
         }
-
-        //set name and email
-        setCName("Quin")
-        setEmail("tinyshark123465@gmail.com")
-        setOPassword("password")
-        setLoading(false);
     }
 
     if(isLoading){
@@ -50,8 +50,26 @@ const Settings = () => {
 
     async function handleSubmit(event){
         event.preventDefault();
-        alert('Saved');
+        if(new_name == "") return;
 
+        const data = {username: new_name}
+        try {
+            const response = await UserService.update(id, data);
+            setCName(response.data.user.username);
+            alert('Saved!');
+        } catch (error) {
+            if(error.response?.status){
+                console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+            } else {
+                console.log(error);
+            }
+            alert("Unable to load data at this time.")
+        }
+    }
+
+    async function handleDelete(event){
+        event.preventDefault();
+        alert("Delete Account!");
     }
 
 
@@ -87,7 +105,11 @@ const Settings = () => {
                             className="settings_option_content"
                         />
                     </label>
-                    {/* <input type="submit" value="Save" className="submit_button"/> */}
+                    <label className="settings_display_option">
+                        <p className="settings_option_title">Delete Account:</p>
+                        <p className="settings_option_delete" onClick={handleDelete}>Permanently delete my account.</p>
+                    </label>
+
                     </form>
 
                     <div className="settings_display_save">
