@@ -156,8 +156,6 @@ class UserAccountList(Resource):
     def get(self):
         """
         Query for a user list by resource
-
-        TODO: Add option for no resource (get_all)
         """
         schema = UserAccountSchema(many=True)
         resource = request.json['resource']
