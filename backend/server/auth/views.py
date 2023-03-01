@@ -76,8 +76,10 @@ def login():
         return jsonify({"msg": "Missing email or password"}), 400
 
     user = UserAccount.query.filter_by(email=email).first()
-    if user is None or not pwd_context.verify(password, user.password):
-        return jsonify({"msg": "Bad credentials"}), 400
+    if user is None:
+        return jsonify({"msg": "Bad email"}), 452
+    elif not pwd_context.verify(password, user.password):
+        return jsonify({"msg": "Bad password"}), 453
 
     access_token = create_access_token(identity=user.id)
     response = jsonify({"msg": "login successful", "id": user.id})
