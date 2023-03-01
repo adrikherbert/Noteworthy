@@ -179,29 +179,32 @@ class CollectionList(Resource):
         Query for a user list by resource
         """
         schema = CollectionSchema(many=True)
-        resource = request.json['resource']
-
         query = 0
 
-        if resource == 'id':
-            constraint = request.json['constraint']
-            query = Collection.query.filter_by(id=constraint)
-        elif resource == 'parent_id':
-            constraint = request.json['constraint']
-            query = Collection.query.filter_by(parent_id=constraint)
-        elif resource == 'user_id':
-            constraint = request.json['constraint']
-            query = Collection.query.filter_by(user_id=constraint)
-        elif resource == 'access_type':
-            constraint = request.json['constraint']
-            query = Collection.query.filter_by(access_type=constraint)
-        elif resource == 'title':
-            constraint = request.json['constraint']
-            query = Collection.query.filter_by(title=constraint)
-        elif resource == 'none':
+        if not request.json:
             query = Collection.query
         else:
-            return {"msg": "invalid resource"}, 404
+            resource = request.json['resource']
+
+            if resource == 'id':
+                constraint = request.json['constraint']
+                query = Collection.query.filter_by(id=constraint)
+            elif resource == 'parent_id':
+                constraint = request.json['constraint']
+                query = Collection.query.filter_by(parent_id=constraint)
+            elif resource == 'user_id':
+                constraint = request.json['constraint']
+                query = Collection.query.filter_by(user_id=constraint)
+            elif resource == 'access_type':
+                constraint = request.json['constraint']
+                query = Collection.query.filter_by(access_type=constraint)
+            elif resource == 'title':
+                constraint = request.json['constraint']
+                query = Collection.query.filter_by(title=constraint)
+            elif resource == 'none':
+                query = Collection.query
+            else:
+                return {"msg": "invalid resource"}, 404
         
 
         return paginate(query, schema)
