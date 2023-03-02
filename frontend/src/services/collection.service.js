@@ -1,7 +1,6 @@
 import axios from 'axios';
 
-const userBaseURL = "http://localhost:5000/api/v1/users"
-
+const colBaseURL = "http://localhost:5000/api/v1/collections"
 
 function getAxios() {
   return axios.create({
@@ -11,29 +10,25 @@ function getAxios() {
     withCredentials: true
   })
 }
-class UserService {
-  getAll(data) {
-    return axios.get(userBaseURL, data);
+class CollectionService {
+  getAll(uid_data) {
+    return getAxios().get(colBaseURL, uid_data);
   }
 
   get(id) {
-    return getAxios().get(userBaseURL + '/' + id);
-  }
-
-  login(info) {
-    return axios.post("http://localhost:5000/auth/login", info, {withCredentials: true});
+    return getAxios().get(colBaseURL + '/' + id);
   }
 
   create(data) {
-    return axios.post(userBaseURL, data);
+    return getAxios().post(colBaseURL, data);
   }
 
   update(id, data) {
-    return getAxios().put(userBaseURL + '/' + id, data);
+    return getAxios().put(colBaseURL + '/' + id, data);
   }
 
   delete(id) {
-    return getAxios().delete(userBaseURL + '/' + id);
+    return getAxios().delete(colBaseURL + '/' + id);
   }
 
 }
@@ -45,4 +40,4 @@ function getCookie(name) {
   return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
-export default new UserService();
+export default new CollectionService();

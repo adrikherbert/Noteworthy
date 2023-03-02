@@ -1,19 +1,37 @@
 import { Outlet, Link } from "react-router-dom";
 import { useEffect, useState } from 'react';
 
-import Note from './Note.js'
+import Note from './Note'
+
+import NoteService from '../services/note.service.js';
 
 import './notes.css';
 
 const Notes = ({user_id}) => {
     const [notes, setNotes] = useState([]);
+    const [collection_id, setColID] = useState(null);
 
 
     useEffect(() => {
+        // const col_id = localStorage.get("curr_collection_id");
+        // setColID(col_id);
+        // getNotes(col_id);
         getNotes();
     }, [])
 
-    async function getNotes() {
+    async function getNotes(col_id) {
+        const info = {};
+        try {
+            const response = await NoteService.getAll(info);
+
+        } catch(error){
+            if(error.response?.status){
+                console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+            } else {
+                console.log(error);
+            }
+        }
+
         let list = [];
 
         for (let i=0; i<10; i++){
