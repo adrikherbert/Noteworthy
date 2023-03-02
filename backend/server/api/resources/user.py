@@ -179,15 +179,18 @@ class UserAccountList(Resource):
         if not request.json:
             query = UserAccount.query
         else:
-            resources = request.args.get('resource')
-            constraints = request.args.get('constraint')
+            resource = request.args.get('resource')
+            constraint = request.args.get('constraint')
+
+            resources = resource.split(',')
+            constraints = constraint.split(',')
 
             query = UserAccount.query
 
             for r in range(len(resources)):
                 if resources[r] == 'id':
                     c = constraints[r]
-                    query = query.filter_by(id=c)
+                    query = query.filter_by(id=int(c))
                 elif resources[r] == 'username':
                     c = constraints[r]
                     query = query.filter_by(username=c)
@@ -196,7 +199,7 @@ class UserAccountList(Resource):
                     query = query.filter_by(email=c)
                 elif resources[r] == 'active':
                     c = constraints[r]
-                    query = query.filter_by(active=c)
+                    query = query.filter_by(active=(c=='true'))
                 else:
                     return {"msg": "invalid resource"}, 404
         
