@@ -131,11 +131,11 @@ class CollectionList(Resource):
               type: object
               properties:
                 resource:
-                  type: string
-                  example: title
+                  type: array
+                  example: ['user_id', 'title']
                 constraint:
-                  type: any
-                  example: example title
+                  type: array
+                  example: [0, 'General']
       responses:
         200:
           content:
@@ -176,35 +176,36 @@ class CollectionList(Resource):
 
     def get(self):
         """
-        Query for a user list by resource
+        Query for a collection list by resource
         """
         schema = CollectionSchema(many=True)
-        query = 0
 
         if not request.json:
             query = Collection.query
         else:
-            resource = request.json['resource']
+            resources = request.json.get('resource')
+            constraints = request.json.get('constraint')
 
-            if resource == 'id':
-                constraint = request.json['constraint']
-                query = Collection.query.filter_by(id=constraint)
-            elif resource == 'parent_id':
-                constraint = request.json['constraint']
-                query = Collection.query.filter_by(parent_id=constraint)
-            elif resource == 'user_id':
-                constraint = request.json['constraint']
-                query = Collection.query.filter_by(user_id=constraint)
-            elif resource == 'access_type':
-                constraint = request.json['constraint']
-                query = Collection.query.filter_by(access_type=constraint)
-            elif resource == 'title':
-                constraint = request.json['constraint']
-                query = Collection.query.filter_by(title=constraint)
-            elif resource == 'none':
-                query = Collection.query
-            else:
-                return {"msg": "invalid resource"}, 404
+            query = Collection.query
+
+            for r in range(len(resources)):
+                if resources[r] == 'id':
+                    c = constraints[r]
+                    query = query.filter_by(id=c)
+                elif resources[r] == 'parent_id':
+                    c = constraints[r]
+                    query = query.filter_by(parent_id=c)
+                elif resources[r] == 'user_id':
+                    c = constraints[r]
+                    query = query.filter_by(user_id=c)
+                elif resources[r] == 'access_type':
+                    c = constraints[r]
+                    query = query.filter_by(access_type=c)
+                elif resources[r] == 'title':
+                    c = constraints[r]
+                    query = query.filter_by(title=c)
+                else:
+                    return {"msg": "invalid resource"}, 404
         
 
         return paginate(query, schema)

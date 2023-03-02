@@ -128,11 +128,11 @@ class UserAccountList(Resource):
               type: object
               properties:
                 resource:
-                  type: string
-                  example: email
+                  type: array
+                  example: ['email', 'active']
                 constraint:
-                  type: any
-                  example: example@example.com
+                  type: array
+                  example: ['example@example.com', true]
       responses:
         200:
           content:
@@ -175,32 +175,30 @@ class UserAccountList(Resource):
         Query for a user list by resource
         """
         schema = UserAccountSchema(many=True)
-        query = 0
 
         if not request.json:
             query = UserAccount.query
         else:
-            resource = request.json['resource']
+            resources = request.json.get('resource')
+            constraints = request.json.get('constraint')
 
-            if resource == 'id':
-                constraint = request.json['constraint']
-                query = UserAccount.query.filter_by(id=constraint)
-            elif resource == 'username':
-                constraint = request.json['constraint']
-                query = UserAccount.query.filter_by(username=constraint)
-            elif resource == 'email':
-                constraint = request.json['constraint']
-                query = UserAccount.query.filter_by(email=constraint)
-            elif resource == 'root_collection_id':
-                constraint = request.json['constraint']
-                query = UserAccount.query.filter_by(root_collection_id=constraint)
-            elif resource == 'active':
-                constraint = request.json['constraint']
-                query = UserAccount.query.filter_by(active=constraint)
-            elif resource == 'none':
-                query = UserAccount.query
-            else:
-                return {"msg": "invalid resource"}, 404
+            query = UserAccount.query
+
+            for r in range(len(resources)):
+                if resources[r] == 'id':
+                    c = constraints[r]
+                    query = query.filter_by(id=c)
+                elif resources[r] == 'username':
+                    c = constraints[r]
+                    query = query.filter_by(username=c)
+                elif resources[r] == 'email':
+                    c = constraints[r]
+                    query = query.filter_by(email=c)
+                elif resources[r] == 'active':
+                    c = constraints[r]
+                    query = query.filter_by(active=c)
+                else:
+                    return {"msg": "invalid resource"}, 404
         
 
         return paginate(query, schema)
