@@ -197,7 +197,7 @@ class NoteList(Resource):
                     query = query.filter_by(id=int(c))
                 elif resources[r] == 'collection_id':
                     c = constraints[r]
-                    query = query.filter_by(parent_id=int(c))
+                    query = query.filter_by(collection_id=int(c))
                 elif resources[r] == 'user_id':
                     c = constraints[r]
                     query = query.filter_by(user_id=int(c))
