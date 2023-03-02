@@ -124,18 +124,19 @@ class NoteList(Resource):
         - api
       summary: Get a list of notes
       description: Get a list of paginated notes
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                resource:
-                  type: array
-                  example: ['user_id', 'title']
-                constraint:
-                  type: array
-                  example: [0, 'example']
+      parameters:
+        - in: query
+          name: resource
+          type: string
+          required: true
+          description: comma-separated list of resources to constrain to
+          example: user_id,collection_id
+        - in: query
+          name: constraint
+          type: string
+          required: true
+          description: comma-separated list of constraints corresponding to each resource
+          example: 13,45
       responses:
         200:
           content:
