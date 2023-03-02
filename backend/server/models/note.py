@@ -13,6 +13,8 @@ class Note(db.Model):
     title = db.Column(db.String(60), nullable=False)
     comments = db.Column(ARRAY(db.String(1000)), nullable=True)
     reactions = db.Column(ARRAY(db.Integer), nullable=True)
+    is_visible = db.Column(db.Boolean, default=True, nullable=False)
+    location = db.Column(db.Integer, nullable=True)
 
     def to_dict(self):
         return {
@@ -24,4 +26,5 @@ class Note(db.Model):
             "title": self.title,
             "comments": self.comments,
             "reactions": self.reactions,
+            "is_visible": self.is_visible
         }

@@ -1,8 +1,8 @@
-from flask import request
+from flask import request, jsonify, make_response
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from server.api.schemas import NoteSchema, LocationSchema
-from server.models import Note
+from server.models import Note, Location
 from server.extensions import db
 from server.commons.pagination import paginate
 
@@ -181,15 +181,24 @@ class NoteList(Resource):
                     comments:
                       type: array
                       example: ["comment 1", "comment 2", "comment 3"]
+                    is_visible:
+                      type: boolean 
+                      example: true 
                 location:
                   type: object
                   properties:
                     url:
                       type: string
                       example: https://example.com
-                    coords:
-                      type: array
-                      example: [0, 0]
+                    location_type:
+                      type: integer 
+                      example: 0
+                    x:
+                      type: integer
+                      example: 0
+                    y:
+                      type: integer
+                      example: 0
       responses:
         201:
           content:
@@ -236,9 +245,9 @@ class NoteList(Resource):
             elif resource == 'title':
                 constraint = request.json['constraint']
                 query = Note.query.filter_by(title=constraint)
-            elif resource == 'location':
+            elif resource == 'is_visible':
                 constraint = request.json['constraint']
-                query = Note.query.filter_by(location=constraint)
+                query = Note.query.filter_by(is_visible=constraint)
             elif resource == 'none':
                 query = Note.query
             else:
@@ -285,3 +294,87 @@ class NoteList(Resource):
         db.session.commit()
 
         return {"msg": "note created", "note": note_schema.dump(note), "location": location_schema.dump(location)}, 201
+
+
+class NoteByPage(Resource):
+    """Get all notes by URL
+
+    ---
+    get:
+      tags:
+        - api
+      summary: Get a list of notes and their locations by URL
+      description: Get a list of notes and their locations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  example: https://example.com
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  note <i>:
+                    type: object
+                    properties:
+                      note: NoteSchema
+                      location: LocationSchema
+        204:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: no notes found
+        400:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: invalid request body (no url)
+
+    """
+
+    method_decorators = [jwt_required()]
+
+    def get(self):
+        note_schema = NoteSchema()
+        location_schema = LocationSchema()
+        user_id = get_jwt_identity()
+
+        url = request.json.get("url")
+        if not url:
+            return {"msg": "invalid request body"}, 400
+
+        payload = {}
+
+        locations = Location.query.filter_by(url=url, user_id=user_id)
+        for location in locations:
+            note = Note.query.get(location.note_id)
+
+            note_dict = {}
+            location_dict = {}
+            note_dict['note'] = note.to_dict()
+            location_dict['location'] = location.to_dict()
+
+            payload[f'note {note.id}'] = {}
+            payload[f'note {note.id}'].update(note_dict)
+            payload[f'note {note.id}'].update(location_dict)
+        
+        if not payload:
+            return {"msg": "no notes found"}, 204
+ 
+        
+        return make_response(jsonify(payload), 200)

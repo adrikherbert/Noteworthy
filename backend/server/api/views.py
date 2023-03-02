@@ -17,6 +17,7 @@ api.add_resource(UserAccountResource, "/users/<int:user_id>", endpoint="user_by_
 api.add_resource(UserAccountList, "/users", endpoint="users")
 api.add_resource(NoteResource, "/notes/<int:note_id>", endpoint="note_by_id")
 api.add_resource(NoteList, "/notes", endpoint="notes")
+api.add_resource(NoteByPage, "/page", endpoint="note_by_page")
 api.add_resource(CollectionResource, "/collections/<int:collection_id>", endpoint="collection_by_id")
 api.add_resource(CollectionList, "/collections", endpoint="collections")
 
@@ -31,6 +32,7 @@ def register_views():
     apispec.spec.path(view=UserAccountList, app=current_app)
     apispec.spec.path(view=NoteResource, app=current_app)
     apispec.spec.path(view=NoteList, app=current_app)
+    apispec.spec.path(view=NoteByPage, app=current_app)
     apispec.spec.path(view=CollectionResource, app=current_app)
     apispec.spec.path(view=CollectionList, app=current_app)
 
