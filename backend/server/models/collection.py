@@ -6,7 +6,7 @@ class Collection(db.Model):
     """Collection model"""
     
     id = db.Column(db.Integer, primary_key=True)
-    parent_id = db.Column(db.Integer, db.ForeignKey("collection.id"), nullable=False)
+    parent_id = db.Column(db.Integer, db.ForeignKey("collection.id"), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user_account.id"), nullable=False)
     access_type = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(60), nullable=False)
