@@ -1,20 +1,35 @@
 from flask import request, jsonify, Blueprint, current_app as app
 from flask_jwt_extended import (
     create_access_token,
-    create_refresh_token,
+    set_access_cookies,
+    unset_jwt_cookies,
     jwt_required,
     get_jwt_identity,
     get_jwt,
 )
+from datetime import datetime, timezone, timedelta
 
 from server.models import UserAccount
 from server.extensions import pwd_context, jwt, apispec
 from server.auth.helpers import revoke_token, is_token_revoked, add_token_to_database
 
-# TODO: Store JWTs in httpOnly cookie
-# https://blog.logrocket.com/jwt-authentication-best-practices/#tl-dr-what-are-they-good-for
 
 blueprint = Blueprint("auth", __name__, url_prefix="/auth")
+
+
+@blueprint.after_app_request
+def refresh_expiring_jwts(response):
+    try:
+        exp_timestamp = get_jwt()["exp"]
+        now = datetime.now(timezone.utc)
+        target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
+        if target_timestamp > exp_timestamp:
+            access_token = create_access_token(identity=get_jwt_identity())
+            set_access_cookies(response, access_token)
+        return response
+    except (RuntimeError, KeyError):
+        # Case where there is not a valid JWT. Just return the original response
+        return response
 
 
 @blueprint.route("/login", methods=["POST"])
@@ -33,9 +48,9 @@ def login():
             schema:
               type: object
               properties:
-                username:
+                email:
                   type: string
-                  example: myuser
+                  example: myuser@myuser.com
                   required: true
                 password:
                   type: string
@@ -44,72 +59,52 @@ def login():
       responses:
         200:
           content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  access_token:
-                    type: string
-                    example: myaccesstoken
-                  refresh_token:
-                    type: string
-                    example: myrefreshtoken
+            headers:
+              Set-Cookie: access_token_cookie
+              Set-Cookie: csrf_access_token
+          description: login successful
         400:
           description: bad request
-      security: []
-    """
-    if not request.is_json:
-        return jsonify({"msg": "Missing JSON in request"}), 400
-
-    username = request.json.get("username", None)
-    password = request.json.get("password", None)
-    if not username or not password:
-        return jsonify({"msg": "Missing username or password"}), 400
-
-    user = UserAccount.query.filter_by(username=username).first()
-    if user is None or not pwd_context.verify(password, user.password):
-        return jsonify({"msg": "Bad credentials"}), 400
-
-    access_token = create_access_token(identity=user.id)
-    refresh_token = create_refresh_token(identity=user.id)
-    add_token_to_database(access_token, app.config["JWT_IDENTITY_CLAIM"])
-    add_token_to_database(refresh_token, app.config["JWT_IDENTITY_CLAIM"])
-
-    ret = {"access_token": access_token, "refresh_token": refresh_token}
-    return jsonify(ret), 200
-
-
-@blueprint.route("/refresh", methods=["POST"])
-@jwt_required(refresh=True)
-def refresh():
-    """Get an access token from a refresh token
-
-    ---
-    post:
-      tags:
-        - auth
-      summary: Get an access token
-      description: Get an access token by using a refresh token in the `Authorization` header
-      responses:
-        200:
+        452:
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  access_token:
+                  msg:
                     type: string
-                    example: myaccesstoken
-        400:
-          description: bad request
-        401:
-          description: unauthorized
+                    example: bad email
+        453:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: bad password
+      security: []
     """
-    current_user = get_jwt_identity()
-    access_token = create_access_token(identity=current_user)
-    ret = {"access_token": access_token}
+    if not request.is_json:
+        return jsonify({"msg": "Missing JSON in request"}), 400
+
+    email = request.json.get("email", None)
+    password = request.json.get("password", None)
+    if not email or not password:
+        return jsonify({"msg": "Missing email or password"}), 400
+
+    user = UserAccount.query.filter_by(email=email).first()
+    if user is None:
+        return jsonify({"msg": "Bad email"}), 452
+    elif not pwd_context.verify(password, user.password):
+        return jsonify({"msg": "Bad password"}), 453
+
+    access_token = create_access_token(identity=user.id)
+    response = jsonify({"msg": "login successful", "id": user.id})
+    set_access_cookies(response, access_token)
     add_token_to_database(access_token, app.config["JWT_IDENTITY_CLAIM"])
-    return jsonify(ret), 200
+    
+    return response, 200
 
 
 @blueprint.route("/revoke_access", methods=["DELETE"])
@@ -141,39 +136,10 @@ def revoke_access_token():
     jti = get_jwt()["jti"]
     user_identity = get_jwt_identity()
     revoke_token(jti, user_identity)
-    return jsonify({"message": "token revoked"}), 200
 
-
-@blueprint.route("/revoke_refresh", methods=["DELETE"])
-@jwt_required(refresh=True)
-def revoke_refresh_token():
-    """Revoke a refresh token, used mainly for logout
-
-    ---
-    delete:
-      tags:
-        - auth
-      summary: Revoke a refresh token
-      description: Revoke a refresh token, used mainly for logout
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: token revoked
-        400:
-          description: bad request
-        401:
-          description: unauthorized
-    """
-    jti = get_jwt()["jti"]
-    user_identity = get_jwt_identity()
-    revoke_token(jti, user_identity)
-    return jsonify({"message": "token revoked"}), 200
+    response = jsonify({"msg": "token revoked"})
+    unset_jwt_cookies(response)
+    return response, 200
 
 
 @jwt.user_lookup_loader
@@ -190,6 +156,4 @@ def check_if_token_revoked(jwt_headers, jwt_payload):
 @blueprint.before_app_first_request
 def register_views():
     apispec.spec.path(view=login, app=app)
-    apispec.spec.path(view=refresh, app=app)
     apispec.spec.path(view=revoke_access_token, app=app)
-    apispec.spec.path(view=revoke_refresh_token, app=app)

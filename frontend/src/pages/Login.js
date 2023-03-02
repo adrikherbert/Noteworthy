@@ -27,35 +27,36 @@ const Login = () => {
 
     async function handleSubmit(event){
         event.preventDefault();
-        const p = await getUser(email);
-        if(p){
-            setValidEmail(false);
-            if(p === password){
-                localStorage.setItem("authenticated", true);
-                localStorage.setItem("user_id", id.current);
-                navigate("/home");
-            } else {
-                setCorrectPass(true);
-            }
-        } else {
-            setValidEmail(true)
-            setCorrectPass(false);
-        }
-    };
-
-    async function getUser(email) {
         try {
-            const response = await UserService.get(email);
+            const info = { email: email, password: password};
+            const response = await UserService.login(info);
             localStorage.setItem("authenticated", true);
-            localStorage.setItem("user_id", response.data.user.id); //Change to id returned when user is created
+            localStorage.setItem("user_id", response.data.id); //Change to id returned when user is created
             navigate("/home");
         } catch (error) {
-            console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
-            alert("Unable to login at this time.")
+            if(error.response?.status){
+                console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+                switch(error.response.status){
+                    case 400:
+                        setCorrectPass(false);
+                        setValidEmail(false);
+                        break;
+                    case 452:
+                        setValidEmail(true);
+                        setCorrectPass(false);
+                        break;
+                    case 453:
+                        setValidEmail(false);
+                        setCorrectPass(true);
+                        break;
+                    default:
+                }
+            } else {
+                console.log(error);
+                alert("Unable to login at this time.");
+            }
         }
-        id.current = 1;
-        return "password"
-    }
+    };
 
     const togglePassword = () => {
         setPShown(!passwordShown);

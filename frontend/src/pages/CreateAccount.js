@@ -34,22 +34,32 @@ const CreateAccount = () => {
         if(!validate()){
             return;
         }
-
-
-        // Make request to check if email is in use
-        if(false){ //Check if true
-            alert("The email entered is already in use");
-        } else {
-            const data = { active: true, email: email, password: password, username: user_name };
+        
+        const data = { active: true, email: email, password: password, username: user_name };
+        try {
+            const create_response = await UserService.create(data);
+            console.log(create_response)
             try {
-                const response = await UserService.create(data);
+                const info = { email: email, password: password}
+                const login_response = await UserService.login(info);
                 localStorage.setItem("authenticated", true);
-                localStorage.setItem("user_id", response.data.user.id); //Change to id returned when user is created
+                localStorage.setItem("user_id", login_response.data.id); //Change to id returned when user is created
                 navigate("/home");
             } catch (error) {
-                console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
-                alert("Unable to create an account at this time.")
+                if(error.response?.status){
+                    console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+                } else {
+                    console.log(error);
+                }
+                alert("Unable to login at this time.")
             }
+        } catch (error) {
+            if(error.response?.status){
+                console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+            } else {
+                console.log(error);
+            }
+            alert("Unable to create an account at this time.")
         }
     };
 

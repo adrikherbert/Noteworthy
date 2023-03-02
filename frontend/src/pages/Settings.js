@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 
 import './settings.css';
 import '../page.css';
 
 import UserService from '../services/user.service.js';
+import Confirm from '../components/Confirm.js';
 
 const Settings = () => {
+    const navigate = useNavigate();
+
     const [id, setId] = useState(null);
     const [email, setEmail] = useState("");
     const [curr_name, setCName] = useState("");
@@ -13,7 +17,12 @@ const Settings = () => {
     const [old_password, setOPassword] = useState("");
     const [new_password, setNPassword] = useState("");
 
+    const del_title = "Delete your account?"
+    const del_text = "Are you sure you want to delete your account and all of its data? This action cannot be undone.";
+
     const [isLoading, setLoading] = useState(true);
+
+    const [confirmModal, showConfirm] = useState(false);
 
     useEffect(() => {
         const stored_id = localStorage.getItem("user_id");
@@ -27,17 +36,17 @@ const Settings = () => {
         //API request to get user based on id
         try {
             const response = await UserService.get(uid);
+            setCName(response.data.user.username);
+            setEmail(response.data.user.email);
+            setLoading(false);
         } catch (error) {
-            console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+            if(error.response?.status){
+                console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+            } else {
+                console.log(error);
+            }
             alert("Unable to load data at this time.")
-            setLoading(true)
         }
-
-        //set name and email
-        setCName("Quin")
-        setEmail("tinyshark123465@gmail.com")
-        setOPassword("password")
-        setLoading(false);
     }
 
     if(isLoading){
@@ -50,12 +59,46 @@ const Settings = () => {
 
     async function handleSubmit(event){
         event.preventDefault();
-        alert('Saved');
+        if(new_name === "") return;
 
+        const data = {username: new_name}
+        try {
+            const response = await UserService.update(id, data);
+            setCName(response.data.user.username);
+            alert('Saved!');
+        } catch (error) {
+            if(error.response?.status){
+                console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+            } else {
+                console.log(error);
+            }
+            alert("Unable to load data at this time.")
+        }
     }
 
+    async function handleDelete(event){
+        event.preventDefault();
+        showConfirm(true)
+    }
 
-    return(
+    async function handleConfirm(){
+        try{
+            const response = await UserService.delete(id);
+            console.log(response.data.msg);
+            localStorage.setItem("authenticated", "false");
+            localStorage.removeItem("user_id");
+            navigate("/login");
+        } catch(error) {
+            if(error.response?.status){
+                console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+            } else {
+                console.log(error);
+            }
+            alert('Could not delete your account at this time!');
+        }
+    }
+
+    return (
         <div className="titleSplit">
             <div className="titleBar">
                 <h1>Settings</h1>
@@ -87,7 +130,10 @@ const Settings = () => {
                             className="settings_option_content"
                         />
                     </label>
-                    {/* <input type="submit" value="Save" className="submit_button"/> */}
+                    <label className="settings_display_option">
+                        <p className="settings_option_title">Delete Account:</p>
+                        <p className="settings_option_delete" onClick={handleDelete}>Permanently delete my account.</p>
+                    </label>
                     </form>
 
                     <div className="settings_display_save">
@@ -95,6 +141,7 @@ const Settings = () => {
                     </div>
                 </div>
             </div>
+            {confirmModal && <Confirm closeModal={showConfirm} onConfirm={handleConfirm} text={del_text} title={del_title}/>}
         </div>
     )   
 }

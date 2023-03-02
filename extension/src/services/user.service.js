@@ -33,7 +33,7 @@ class UserService {
   }
 
   delete(id) {
-    return getAxios().delete(userBaseURL + '/' + id);
+    return axios.delete(userBaseURL + '/' + id);
   }
 
 }

@@ -3,6 +3,7 @@
 Use env var to override
 """
 import os
+from datetime import timedelta
 
 DEBUG = os.environ.get("FLASK_DEBUG")
 ENV = "development" if DEBUG == "1" else "production"
@@ -24,6 +25,9 @@ DATABASE_PORT = os.environ.get("DATABASE_PORT")
 
 # JWT
 JWT_SECRET_KEY = SECRET_KEY = os.environ.get("SECRET_KEY")
+JWT_TOKEN_LOCATION = ["cookies"]
+JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=2)
+
 
 CORS_HEADERS='Content-Type'
 

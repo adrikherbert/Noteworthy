@@ -16,7 +16,6 @@ const UserHome = () => {
         const stored_id = localStorage.getItem("user_id");
         getUser(stored_id);
         setId(stored_id);
-        // setLoading(false);
     }, [])
 
 
@@ -24,15 +23,17 @@ const UserHome = () => {
         //API request to get user based on id
         try {
             const response = await UserService.get(uid);
+            setName(response.data.user.username);
+            setEmail(response.data.user.email);
+            setLoading(false);
         } catch (error) {
-            console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+            if(error.response?.status){
+                console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+            } else {
+                console.log(error);
+            }
             alert("Unable to load data at this time.")
         }
-
-        //set name and email
-        setName("Quin")
-        setEmail("quin@gmail.com")
-        setLoading(false);
     }
 
     if(isLoading){
