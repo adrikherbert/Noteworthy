@@ -6,9 +6,10 @@ https://github.com/vimalloc/flask-jwt-extended/blob/master/examples/blocklist_da
 from datetime import datetime
 
 from flask_jwt_extended import decode_token
+from flask_mail import Message
 from sqlalchemy.orm.exc import NoResultFound
 
-from server.extensions import db
+from server.extensions import db, mail
 from server.models import TokenBlocklist
 
 
@@ -63,3 +64,34 @@ def revoke_token(token_jti, user):
         db.session.commit()
     except NoResultFound:
         raise Exception("Could not find the token {}".format(token_jti))
+
+
+def change_pass(user, new_pass):
+    """Change the password of the given user
+
+    :param user: UserAccount instance
+    :param new_pass: new password
+    """
+    user.password = new_pass
+    db.session.commit()
+
+
+def set_temp_pass(user, temp_pass):
+    """Set the temporary password of the given user, email them said password, and revoke their JWT: forced relogin
+
+    :param user: UserAccount instance
+    :param temp_pass: temporary password
+    """
+    user.password = temp_pass
+    db.session.commit()
+
+    msg = Message(
+        "Noteworthy Password Reset",
+        recipients=[user.email]
+    )
+
+    msg.body = "You have been sent a temporary password. Please use this temporary password to login and change your password: {}".format(temp_pass)
+
+    mail.send(msg)
+
+    

@@ -1,5 +1,4 @@
 from flask import Flask
-from flask_cors import CORS
 
 from sshtunnel import SSHTunnelForwarder
 import signal
@@ -10,10 +9,7 @@ import logging
 from server import api
 from server import auth
 from server import manage
-from server.extensions import apispec
-from server.extensions import db
-from server.extensions import jwt
-from server.extensions import migrate
+from server.extensions import apispec, db, jwt, migrate, cors, mail
 
 
 def create_app(testing=False):
@@ -72,8 +68,8 @@ def configure_extensions(app: Flask):
     db.init_app(app)
     jwt.init_app(app)
     migrate.init_app(app, db)
-
-    CORS(app, origins=["http://localhost:3000"], expose_headers="Set-Cookie", supports_credentials=True)
+    cors.init_app(app)
+    mail.init_app(app)
 
 
 def configure_cli(app: Flask):
