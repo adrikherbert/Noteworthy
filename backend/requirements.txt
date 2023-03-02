@@ -6,6 +6,7 @@ flask-sqlalchemy
 flask-marshmallow
 flask-jwt-extended
 flask_cors
+Flask-Mail
 marshmallow-sqlalchemy
 python-dotenv
 passlib
