@@ -183,24 +183,27 @@ class NoteList(Resource):
         if not request.json:
             query = Note.query
         else:
-            resources = request.json.get('resource')
-            constraints = request.json.get('constraint')
+            resource = request.args.get('resource')
+            constraint = request.args.get('constraint')
+
+            resources = resource.split(',')
+            constraints = constraint.split(',')
 
             query = Note.query
 
             for r in range(len(resources)):
                 if resources[r] == 'id':
                     c = constraints[r]
-                    query = query.filter_by(id=c)
+                    query = query.filter_by(id=int(c))
                 elif resources[r] == 'collection_id':
                     c = constraints[r]
-                    query = query.filter_by(parent_id=c)
+                    query = query.filter_by(parent_id=int(c))
                 elif resources[r] == 'user_id':
                     c = constraints[r]
-                    query = query.filter_by(user_id=c)
+                    query = query.filter_by(user_id=int(c))
                 elif resources[r] == 'access_type':
                     c = constraints[r]
-                    query = query.filter_by(access_type=c)
+                    query = query.filter_by(access_type=(c=='true'))
                 elif resources[r] == 'content':
                     c = constraints[r]
                     query = query.filter_by(content=c)
@@ -209,19 +212,19 @@ class NoteList(Resource):
                     query = query.filter_by(title=c)
                 elif resources[r] == 'is_visible':
                     c = constraints[r]
-                    query = query.filter_by(is_visible=c)
+                    query = query.filter_by(is_visible=(c=='true'))
                 elif resources[r] == 'location_type':
                     c = constraints[r]
-                    query = query.filter_by(location_type=c)
+                    query = query.filter_by(location_type=int(c))
                 elif resources[r] == 'url':
                     c = constraints[r]
                     query = query.filter_by(url=c)
                 elif resources[r] == 'x':
                     c = constraints[r]
-                    query = query.filter_by(x=c)
+                    query = query.filter_by(x=int(c))
                 elif resources[r] == 'y':
                     c = constraints[r]
-                    query = query.filter_by(y=c)
+                    query = query.filter_by(y=int(c))
                 else:
                     return {"msg": "invalid resource"}, 404
         

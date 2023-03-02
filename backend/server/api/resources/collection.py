@@ -183,24 +183,30 @@ class CollectionList(Resource):
         if not request.json:
             query = Collection.query
         else:
-            resources = request.json.get('resource')
-            constraints = request.json.get('constraint')
+            resource = request.args.get('resource')
+            constraint = request.args.get('constraint')
+
+            resources = resource.split(',')
+            constraints = constraint.split(',')
 
             query = Collection.query
+
+            print(resources)
+            print(constraints)
 
             for r in range(len(resources)):
                 if resources[r] == 'id':
                     c = constraints[r]
-                    query = query.filter_by(id=c)
+                    query = query.filter_by(id=int(c))
                 elif resources[r] == 'parent_id':
                     c = constraints[r]
-                    query = query.filter_by(parent_id=c)
+                    query = query.filter_by(parent_id=int(c))
                 elif resources[r] == 'user_id':
                     c = constraints[r]
-                    query = query.filter_by(user_id=c)
+                    query = query.filter_by(user_id=int(c))
                 elif resources[r] == 'access_type':
                     c = constraints[r]
-                    query = query.filter_by(access_type=c)
+                    query = query.filter_by(access_type=int(c))
                 elif resources[r] == 'title':
                     c = constraints[r]
                     query = query.filter_by(title=c)
