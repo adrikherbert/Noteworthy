@@ -35,13 +35,13 @@ def register_views():
     apispec.spec.path(view=CollectionList, app=current_app)
 
 
-@blueprint.before_request
-@jwt_required
-def block_touch_other_users():
-    if request.method in ["POST", "PUT", "PATCH", "DELETE"]:
-        user_id = get_jwt_identity()
-        if request.json.get("user_id", None) and request.json["user_id"] != user_id:
-            return jsonify({"msg": "You cannot touch other users"}), 403
+# @blueprint.before_request
+# @jwt_required
+# def block_touch_other_users():
+#     if request.method in ["POST", "PUT", "PATCH", "DELETE"]:
+#         user_id = get_jwt_identity()
+#         if request.json.get("user_id", None) and request.json["user_id"] != user_id:
+#             return jsonify({"msg": "You cannot touch other users"}), 403
 
 
 @blueprint.errorhandler(ValidationError)
