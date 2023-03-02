@@ -215,23 +215,25 @@ class UserAccountList(Resource):
         user = schema.load(request.json)
         query = UserAccount.query.filter_by(email=user.email).scalar()
 
-        if not query:
-          db.session.add(user)
-          db.session.commit()
+        if query:
+            return {"msg": "user already exists"}, 400
+        
+        db.session.add(user)
+        db.session.commit()
 
-          collection_schema = CollectionSchema(partial=True)
-          collection = {"user_id": user.id, "access_type": 0, "title": "General"}
-          collection = collection_schema.load(collection)
+        collection_schema = CollectionSchema(partial=True)
+        collection = {"user_id": user.id, "access_type": 0, "title": "General"}
+        collection = collection_schema.load(collection)
 
-          db.session.add(collection)
-          db.session.commit()
+        db.session.add(collection)
+        db.session.commit()
 
-          root_collection_id = {"root_collection_id": collection.id}
+        root_collection_id = {"root_collection_id": collection.id}
 
-          partial_user_schema = UserAccountSchema(partial=True)
-          user = partial_user_schema.load(root_collection_id, instance=user)
+        partial_user_schema = UserAccountSchema(partial=True)
+        user = partial_user_schema.load(root_collection_id, instance=user)
 
-          db.session.commit()
-          return {"msg": "user created", "user": schema.dump(user), "root_collection": collection_schema.dump(collection)}, 201
+        db.session.commit()
+        return {"msg": "user created", "user": schema.dump(user), "root_collection": collection_schema.dump(collection)}, 201
 
-        return {"msg": "user already exists"}, 400
+        
