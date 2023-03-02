@@ -11,7 +11,7 @@ from datetime import datetime, timezone, timedelta
 
 from server.models import UserAccount
 from server.extensions import pwd_context, jwt, apispec
-from server.auth.helpers import revoke_token, is_token_revoked, add_token_to_database
+from server.auth.helpers import revoke_token, is_token_revoked, add_token_to_database, change_pass, set_temp_pass
 
 
 blueprint = Blueprint("auth", __name__, url_prefix="/auth")
@@ -140,6 +140,103 @@ def revoke_access_token():
     response = jsonify({"msg": "token revoked"})
     unset_jwt_cookies(response)
     return response, 200
+
+
+@blueprint.route("/reset_password", methods=["POST"])
+@jwt_required()
+def reset_password():
+    """Reset a user's password
+
+    ---
+    post:
+      tags:
+        - auth
+      summary: Reset a user's password to a temporary one.
+      description: Reset a user's password to a temporary one.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: P4$$w0rd!
+                  required: true
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: password reset
+        400:
+          description: bad request
+    """
+    user_id = get_jwt_identity()
+    user = UserAccount.query.filter_by(id=user_id).first()
+    if user is None:
+        return jsonify({"msg": "The user cannot be found"}), 400
+    
+    password = request.json.get("password", None)
+    if not password:
+        return jsonify({"msg": "Missing password"}), 400
+    change_pass(user, password)
+    return jsonify({"msg": "password changed"}), 200        
+
+
+@blueprint.route("/temp_password", methods=["POST"])
+def temp_password():
+    """Set a user's password to a temporary one.
+
+    ---
+    post:
+    tags:
+      - auth
+    summary: Change a user's password
+    description: Change a user's password
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: myuser@myuser.com
+                required: true
+    responses:
+      200:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: temporary password set
+      400:
+        description: bad request
+    """
+    if not request.is_json:
+        return jsonify({"msg": "Missing JSON in request"}), 400
+    
+    email = request.json.get("email", None)
+    if not email:
+        return jsonify({"msg": "Missing email"}), 400
+    
+    user = UserAccount.query.filter_by(email=email).first()
+    if user is None:
+        return jsonify({"msg": "Bad email"}), 452
+    
+    from secrets import token_urlsafe
+    password = token_urlsafe(16)
+    set_temp_pass(user, password)
+
+    return jsonify({"msg": "temporary password set"}), 200
 
 
 @jwt.user_lookup_loader
