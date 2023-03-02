@@ -2,6 +2,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import './popup.css'
 import Login from './login';
+import Main from './Main';
 
 const App: React.FC<{}> = () => {
   return (

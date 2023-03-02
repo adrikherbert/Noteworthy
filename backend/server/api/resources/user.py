@@ -201,7 +201,11 @@ class UserAccountList(Resource):
         schema = UserAccountSchema()
         user = schema.load(request.json)
 
-        db.session.add(user)
-        db.session.commit()
+        query = UserAccount.query.filter_by(email=user.email).scalar()
 
-        return {"msg": "user created", "user": schema.dump(user)}, 201
+        if not query:
+          db.session.add(user)
+          db.session.commit()
+          return {"msg": "user created", "user": schema.dump(user)}, 201
+
+        return {"msg": "user already exists"}, 400

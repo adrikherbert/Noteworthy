@@ -10,7 +10,9 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import UserService from '../services/user.service.js';
 import './popup.css';
+import { useEffect, useState } from 'react';
 
 const theme = createTheme({
   palette: {
@@ -21,13 +23,45 @@ const theme = createTheme({
 });
 
 export default function Login() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const [correctPass, setCorrectPass] = useState(false);
+  const [validEmail, setValidEmail] = useState(false);
+
+  useEffect(() => { 
+    localStorage.setItem("authenticated", "false")
+  }, []);
+
+  async function handleSubmit(event){
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    try {
+        const info = { email: data.get('email'), password: data.get('password')};
+        const response = await UserService.login(info);
+        localStorage.setItem("authenticated", "true");
+        localStorage.setItem("user_id", response.data.id); //Change to id returned when user is created
+        console.log("AUTHENTICATED");
+    } catch (error) {
+        if(error.response?.status){
+            console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+            switch(error.response.status){
+                case 400:
+                    setCorrectPass(false);
+                    setValidEmail(false);
+                    break;
+                case 452:
+                    setValidEmail(true);
+                    setCorrectPass(false);
+                    break;
+                case 453:
+                    setValidEmail(false);
+                    setCorrectPass(true);
+                    break;
+                default:
+            }
+        } else {
+            console.log(error);
+            alert("Unable to login at this time.");
+        }
+    }
   };
 
   return (
@@ -72,6 +106,11 @@ export default function Login() {
             >
               Sign In
             </Button>
+            {validEmail && correctPass ?
+              ""
+            :
+              "Invalid Email or Password"
+            }
             <Grid container>
               <Grid item xs={12}>
                 <Link href="http://localhost:3000" variant="body2" target="_blank">

@@ -115,24 +115,13 @@ const HtmlNote = () => {
       setY(event.clientY + window.pageYOffset);
     }
   };
-
-  function showNote (id) {
-    setNotes((prevNotes) =>
-              prevNotes.reduce(
-                (acc, cv) =>
-                  cv.id === id
-                    ? acc.push({ ...cv, visible: true }) && acc
-                    : acc.push(cv) && acc,
-                []
-              )
-        );
-  };
-
-  function attachShadow (range, noteId, showNote) {
+  
+  function attachShadow (range, noteId) {
     var boundRect = range.getClientRects();
     for (let i = 0; i < boundRect.length; i++) {
         var outsideSpan = document.createElement("span");
         outsideSpan.setAttribute("class", "outsideSpan");
+        outsideSpan.setAttribute("id", `outerSpan ${noteId}`);
         var shadowSpan = document.createElement("span");
         shadowSpan.style.position = "absolute";
         shadowSpan.style.display = "block";
@@ -222,7 +211,7 @@ const HtmlNote = () => {
           visible: true
         }
       ]);
-      attachShadow(document.getSelection().getRangeAt(0), newId, showNote);
+      attachShadow(document.getSelection().getRangeAt(0), newId);
     }
     chrome.runtime.onMessage.removeListener(newHtmlNote);
     sendResponse();
@@ -275,6 +264,7 @@ const HtmlNote = () => {
                 []
               )
             );
+            document.getElementById(`outerSpan ${note.id}`).remove();
           }
         };
 
