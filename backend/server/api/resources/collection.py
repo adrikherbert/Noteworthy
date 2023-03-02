@@ -183,8 +183,8 @@ class CollectionList(Resource):
         if not request.json:
             query = Collection.query
         else:
-            resources = request.json.get('resource')
-            constraints = request.json.get('constraint')
+            resources = request.args.get('resource')
+            constraints = request.args.get('constraint')
 
             query = Collection.query
 

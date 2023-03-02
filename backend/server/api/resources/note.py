@@ -183,8 +183,8 @@ class NoteList(Resource):
         if not request.json:
             query = Note.query
         else:
-            resources = request.json.get('resource')
-            constraints = request.json.get('constraint')
+            resources = request.args.get('resource')
+            constraints = request.args.get('constraint')
 
             query = Note.query
 
