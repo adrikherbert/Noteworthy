@@ -9,6 +9,7 @@ class UserAccount(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(80), unique=True, nullable=False)
+    root_collection_id = db.Column(db.Integer, unique=True, nullable=True)
     _password = db.Column("password", db.String(255), nullable=False)
     active = db.Column(db.Boolean, default=True)
 

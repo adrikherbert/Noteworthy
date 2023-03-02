@@ -22,3 +22,15 @@ class Reaction(Enum):
 
     THUMBSUP = 0
     THUMBSDOWN = 1
+
+
+class LocationType(Enum):
+    """
+    LocationType Enum for locations 
+
+    COORD = 0\n
+    HTML = 1
+    """ 
+
+    COORD = 0
+    HTML = 0

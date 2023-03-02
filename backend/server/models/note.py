@@ -1,5 +1,5 @@
 from server.extensions import db
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.dialects.postgresql import ARRAY, TEXT
 
 
 class Note(db.Model):
@@ -13,7 +13,11 @@ class Note(db.Model):
     title = db.Column(db.String(60), nullable=False)
     comments = db.Column(ARRAY(db.String(1000)), nullable=True)
     reactions = db.Column(ARRAY(db.Integer), nullable=True)
-    location = db.Column(db.Integer, db.ForeignKey("location.id"), nullable=True)
+    is_visible = db.Column(db.Boolean, default=True, nullable=False)
+    location_type = db.Column(db.Integer, default=0, nullable=False)
+    url = db.Column(TEXT, nullable=False)
+    x = db.Column(db.Integer, default=-1, nullable=False)
+    y = db.Column(db.Integer, default=-1, nullable=False)
 
     def to_dict(self):
         return {
@@ -25,5 +29,9 @@ class Note(db.Model):
             "title": self.title,
             "comments": self.comments,
             "reactions": self.reactions,
-            "location": self.location
+            "is_visible": self.is_visible,
+            "location_type": self.location_type,
+            "url": self.url,
+            "x": self.x,
+            "y": self.y
         }

@@ -65,6 +65,24 @@ def login():
           description: login successful
         400:
           description: bad request
+        452:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: bad email
+        453:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: bad password
       security: []
     """
     if not request.is_json:

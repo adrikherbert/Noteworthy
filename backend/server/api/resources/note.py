@@ -1,8 +1,8 @@
-from flask import request
+from flask import request, jsonify, make_response
 from flask_restful import Resource
-from flask_jwt_extended import jwt_required
-from server.api.schemas import NoteSchema, LocationSchema
-from server.models import Note
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from server.api.schemas import NoteSchema
+from server.models import Note 
 from server.extensions import db
 from server.commons.pagination import paginate
 
@@ -157,39 +157,7 @@ class NoteList(Resource):
       requestBody:
         content:
           application/json:
-            schema:
-              type: object
-              properties:
-                note:
-                  type: object
-                  properties:
-                    user_id:
-                      type: integer
-                      example: 1
-                    collection_id:
-                      type: integer
-                      example: 1
-                    access_type:
-                      type: integer
-                      example: 0
-                    content:
-                      type: string
-                      example: example content
-                    title:
-                      type: string
-                      example: example title
-                    comments:
-                      type: array
-                      example: ["comment 1", "comment 2", "comment 3"]
-                location:
-                  type: object
-                  properties:
-                    url:
-                      type: string
-                      example: https://example.com
-                    coords:
-                      type: array
-                      example: [0, 0]
+            schema: NoteSchema
       responses:
         201:
           content:
@@ -210,6 +178,8 @@ class NoteList(Resource):
         """
         Query for a note list by resource
         """
+        user_id = get_jwt_identity()
+
         schema = NoteSchema(many=True)
         query = 0
 
@@ -236,9 +206,21 @@ class NoteList(Resource):
             elif resource == 'title':
                 constraint = request.json['constraint']
                 query = Note.query.filter_by(title=constraint)
-            elif resource == 'location':
+            elif resource == 'is_visible':
                 constraint = request.json['constraint']
-                query = Note.query.filter_by(location=constraint)
+                query = Note.query.filter_by(is_visible=constraint)
+            elif resource == 'location_type':
+                constraint = request.json['constraint']
+                query = Note.query.filter_by(location_type=constraint)
+            elif resource == 'url':
+                constraint = request.json['constraint']
+                query = Note.query.filter_by(url=constraint, user_id=user_id)
+            elif resource == 'x':
+                constraint = request.json['constraint']
+                query = Note.query.filter_by(x=constraint)
+            elif resource == 'y':
+                constraint = request.json['constraint']
+                query = Note.query.filter_by(y=constraint)
             elif resource == 'none':
                 query = Note.query
             else:
@@ -249,36 +231,12 @@ class NoteList(Resource):
     
 
     def post(self):
-        # Define Note and Location Schemas
-        note_schema = NoteSchema()
-        location_schema = LocationSchema()
+        # Create a note 
+        schema = NoteSchema()
+        note = schema.load(request.json)
 
-        # Get note and location JSON from request
-        note = request.json.get("note")
-        location = request.json.get("location")
-
-        # Load note into schema and commit
-        note = note_schema.load(note)
         db.session.add(note)
         db.session.commit()
 
-        # Get note_id from note.id in db, add to location
-        note_id = note_schema.dump(note).get("id")
-        location = request.json.get("location")
-        location["note_id"] = note_id
-        location = location_schema.load(location)
+        return {"msg": "note created", "note": schema.dump(note)}, 201
 
-        # Commit location with note_id to db
-        db.session.add(location)
-        db.session.commit()
-
-        # Update note.location in db with location.id
-        note_schema = NoteSchema(partial=True)
-        location_id = location_schema.dump(location).get("id")
-        location_id = {"location": location_id}
-        note = note_schema.load(location_id, instance=note)
-
-        # Commit db session
-        db.session.commit()
-
-        return {"msg": "note created", "note": note_schema.dump(note), "location": location_schema.dump(location)}, 201
