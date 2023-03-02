@@ -180,7 +180,7 @@ class NoteList(Resource):
         """
         schema = NoteSchema(many=True)
 
-        if not request.json:
+        if not request.args:
             query = Note.query
         else:
             resource = request.args.get('resource')

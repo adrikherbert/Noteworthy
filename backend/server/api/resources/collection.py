@@ -180,7 +180,7 @@ class CollectionList(Resource):
         """
         schema = CollectionSchema(many=True)
 
-        if not request.json:
+        if not request.args:
             query = Collection.query
         else:
             resource = request.args.get('resource')

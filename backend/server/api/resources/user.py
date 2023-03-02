@@ -176,7 +176,7 @@ class UserAccountList(Resource):
         """
         schema = UserAccountSchema(many=True)
 
-        if not request.json:
+        if not request.args:
             query = UserAccount.query
         else:
             resource = request.args.get('resource')
@@ -184,6 +184,9 @@ class UserAccountList(Resource):
 
             resources = resource.split(',')
             constraints = constraint.split(',')
+
+            print(resources)
+            print(constraints)
 
             query = UserAccount.query
 
