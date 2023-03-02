@@ -6,6 +6,7 @@ class LocationSchema(ma.SQLAlchemyAutoSchema):
 
     id = ma.Int(dump_only=True)
     note_id = ma.Int()
+    user_id = ma.Int()
 
     class Meta:
         model = Location

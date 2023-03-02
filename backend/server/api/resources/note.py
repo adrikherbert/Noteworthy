@@ -256,6 +256,8 @@ class NoteList(Resource):
         # Get note and location JSON from request
         note = request.json.get("note")
         location = request.json.get("location")
+        user_id = note["user_id"]
+        print(user_id)
 
         # Load note into schema and commit
         note = note_schema.load(note)
@@ -266,6 +268,7 @@ class NoteList(Resource):
         note_id = note_schema.dump(note).get("id")
         location = request.json.get("location")
         location["note_id"] = note_id
+        location["user_id"] = user_id
         location = location_schema.load(location)
 
         # Commit location with note_id to db

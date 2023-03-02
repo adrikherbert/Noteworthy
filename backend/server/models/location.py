@@ -7,6 +7,7 @@ class Location(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     note_id = db.Column(db.Integer, db.ForeignKey("note.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("user_account.id"), nullable=False)
     url = db.Column(TEXT, nullable=False)
     coords = db.Column(ARRAY(db.Integer), nullable=False)
 
