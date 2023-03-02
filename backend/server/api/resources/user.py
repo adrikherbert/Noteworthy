@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required
 from server.api.schemas import UserAccountSchema, CollectionSchema
-from server.models import UserAccount, TokenBlocklist, Collection, Location, Note
+from server.models import UserAccount, TokenBlocklist, Collection, Note
 from server.extensions import db
 from server.commons.pagination import paginate
 
@@ -102,7 +102,6 @@ class UserAccountResource(Resource):
     def delete(self, user_id):
         user = UserAccount.query.get_or_404(user_id)
 
-        Location.query.filter_by(user_id=user_id).delete()
         Note.query.filter_by(user_id=user_id).delete()
         Collection.query.filter_by(user_id=user_id).delete()
         TokenBlocklist.query.filter_by(user_id=user_id).delete()
