@@ -1,6 +1,6 @@
 from flask import Blueprint, current_app, jsonify, request
 from flask_restful import Api
-from flask_jwt_extended import get_jwt, get_jwt_identity
+from flask_jwt_extended import get_jwt, get_jwt_identity, jwt_required
 from marshmallow import ValidationError
 from server.extensions import apispec
 # from server.extensions import db
@@ -36,6 +36,7 @@ def register_views():
 
 
 @blueprint.before_request
+@jwt_required
 def block_touch_other_users():
     if request.method in ["POST", "PUT", "PATCH", "DELETE"]:
         user_id = get_jwt_identity()
