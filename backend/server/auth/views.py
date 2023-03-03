@@ -17,19 +17,19 @@ from server.auth.helpers import revoke_token, is_token_revoked, add_token_to_dat
 blueprint = Blueprint("auth", __name__, url_prefix="/auth")
 
 
-@blueprint.after_app_request
-def refresh_expiring_jwts(response):
-    try:
-        exp_timestamp = get_jwt()["exp"]
-        now = datetime.now(timezone.utc)
-        target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
-        if target_timestamp > exp_timestamp:
-            access_token = create_access_token(identity=get_jwt_identity())
-            set_access_cookies(response, access_token)
-        return response
-    except (RuntimeError, KeyError):
-        # Case where there is not a valid JWT. Just return the original response
-        return response
+# @blueprint.after_app_request
+# def refresh_expiring_jwts(response):
+#     try:
+#         exp_timestamp = get_jwt()["exp"]
+#         now = datetime.now(timezone.utc)
+#         target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
+#         if target_timestamp > exp_timestamp:
+#             access_token = create_access_token(identity=get_jwt_identity())
+#             set_access_cookies(response, access_token)
+#         return response
+#     except (RuntimeError, KeyError):
+#         # Case where there is not a valid JWT. Just return the original response
+#         return response
 
 
 @blueprint.route("/login", methods=["POST"])
@@ -107,39 +107,39 @@ def login():
     return response, 200
 
 
-@blueprint.route("/revoke_access", methods=["DELETE"])
+# @blueprint.route("/revoke_access", methods=["DELETE"])
 # @jwt_required()
-def revoke_access_token():
-    """Revoke an access token
+# def revoke_access_token():
+#     """Revoke an access token
 
-    ---
-    delete:
-      tags:
-        - auth
-      summary: Revoke an access token
-      description: Revoke an access token
-      responses:
-        200:
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: token revoked
-        400:
-          description: bad request
-        401:
-          description: unauthorized
-    """
-    jti = get_jwt()["jti"]
-    user_identity = get_jwt_identity()
-    revoke_token(jti, user_identity)
+#     ---
+#     delete:
+#       tags:
+#         - auth
+#       summary: Revoke an access token
+#       description: Revoke an access token
+#       responses:
+#         200:
+#           content:
+#             application/json:
+#               schema:
+#                 type: object
+#                 properties:
+#                   message:
+#                     type: string
+#                     example: token revoked
+#         400:
+#           description: bad request
+#         401:
+#           description: unauthorized
+#     """
+#     jti = get_jwt()["jti"]
+#     user_identity = get_jwt_identity()
+#     revoke_token(jti, user_identity)
 
-    response = jsonify({"msg": "token revoked"})
-    unset_jwt_cookies(response)
-    return response, 200
+#     response = jsonify({"msg": "token revoked"})
+#     unset_jwt_cookies(response)
+#     return response, 200
 
 
 @blueprint.route("/reset_password", methods=["POST"])
@@ -176,8 +176,15 @@ def reset_password():
         400:
           description: bad request
     """
-    user_id = get_jwt_identity()
-    user = UserAccount.query.filter_by(id=user_id).first()
+    # user_id = get_jwt_identity()
+    if not request.is_json:
+        return jsonify({"msg": "Missing JSON in request"}), 400
+
+    email = request.json.get("email", None)
+    if not email or not password:
+        return jsonify({"msg": "Missing email or password"}), 400
+    
+    user = UserAccount.query.filter_by(emai=email).first()
     if user is None:
         return jsonify({"msg": "The user cannot be found"}), 400
     
