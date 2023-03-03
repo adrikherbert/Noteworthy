@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 
 from sshtunnel import SSHTunnelForwarder
 import signal
@@ -17,7 +17,12 @@ def create_app(testing=False):
     app = Flask("server")
     app.config.from_object("server.config")
     
-    logging.basicConfig(level=logging.ERROR)
+    log = logging.getLogger('werkzeug')
+    log.setLevel(logging.DEBUG)
+
+    @app.before_request
+    def print_request():
+        app.logger.debug(f"Request json: {request.json}")
 
     if testing is True:
         app.config["TESTING"] = True

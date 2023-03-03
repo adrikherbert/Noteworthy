@@ -250,13 +250,8 @@ class NoteList(Resource):
 
     def post(self):
         # Create a note
-
-        current_app.logger.debug(request.json)
-
         schema = NoteSchema()
         note = schema.load(request.json)
-
-        current_app.logger.debug(note)
 
         db.session.add(note)
         db.session.commit()
