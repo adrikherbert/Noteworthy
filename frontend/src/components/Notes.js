@@ -11,13 +11,14 @@ const Notes = ({user_id, col_id, col_name}) => {
     const [notes, setNotes] = useState([]);
     const [collection_id, setColID] = useState(null);
     const [collection_name, setColName] = useState("");
+    const [numNotes, setNumNotes] = useState(null);
 
     useEffect(() => {
         // const col_id = localStorage.getItem("curr_collection_id");
         setColID(col_id);
         setColName(col_name);
         getNotes();
-    }, [col_id])
+    }, [col_id, numNotes])
 
     async function getNotes() {
         const constraints = "" + user_id + "," + col_id;
@@ -30,7 +31,8 @@ const Notes = ({user_id, col_id, col_name}) => {
                 const data = {
                     id: note.id,
                     title: note.title,
-                    text: note.content
+                    text: note.content,
+                    url: note.url
                 }
                 list.push(data);
             });
@@ -45,13 +47,17 @@ const Notes = ({user_id, col_id, col_name}) => {
         }
     }
 
+    async function noteDeleted(){
+        setNumNotes(numNotes-1);
+    }
+
     return(
         <div className="notelist_container">
             <h1 className="notelist_title">Notes - {collection_name}</h1>
             <div className="notelist">
                 <ul>
                     {notes.map((data) => 
-                        <Note key={data.id} data={data}/>
+                        <Note key={data.id} data={data} onDelete={noteDeleted}/>
                     )}
                 </ul>
             </div>

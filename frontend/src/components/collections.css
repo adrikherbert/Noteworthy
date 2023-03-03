@@ -75,9 +75,9 @@
 
 .collection_expand_button {
     display: block;
-    width: 30px;
+    width: 15px;
     cursor: pointer;
-    /* fill: #242424; */
+    fill:#242424
 }
 
 .collection_add_button {
