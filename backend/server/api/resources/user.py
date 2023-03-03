@@ -121,18 +121,19 @@ class UserAccountList(Resource):
         - api
       summary: Get a list of users
       description: Get a list of paginated users
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                resource:
-                  type: array
-                  example: ['email', 'active']
-                constraint:
-                  type: array
-                  example: ['example@example.com', true]
+      parameters:
+        - in: query
+          name: resource
+          type: string
+          required: true
+          description: comma-separated list of resources to constrain to
+          example: username,active
+        - in: query
+          name: constraint
+          type: string
+          required: true
+          description: comma-separated list of constraints corresponding to each resource
+          example: Test,true
       responses:
         200:
           content:
