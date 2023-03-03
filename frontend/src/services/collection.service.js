@@ -12,7 +12,7 @@ function getAxios() {
 }
 class CollectionService {
   getAll(uid_data) {
-    return getAxios().get(colBaseURL, uid_data);
+    return getAxios().get(colBaseURL, {params: uid_data});
   }
 
   get(id) {

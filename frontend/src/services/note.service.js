@@ -12,7 +12,7 @@ function getAxios() {
 }
 class NoteService {
   getAll(uid_data) {
-    return axios.get(noteBaseURL, uid_data);
+    return getAxios().get(noteBaseURL, {params: uid_data});
   }
 
   get(id) {

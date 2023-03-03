@@ -6,14 +6,15 @@ const userBaseURL = "http://localhost:5000/api/v1/users"
 function getAxios() {
   return axios.create({
     headers: {
-      'X-CSRF-TOKEN': getCookie('csrf_access_token')
+      'X-CSRF-TOKEN': getCookie('csrf_access_token'),
+      'Content-Type': 'application/json'
     },
     withCredentials: true
   })
 }
 class UserService {
   getAll(data) {
-    return axios.get(userBaseURL, data);
+    return getAxios().get(userBaseURL, {params: data});
   }
 
   get(id) {
@@ -25,7 +26,9 @@ class UserService {
   }
 
   create(data) {
-    return axios.post(userBaseURL, data);
+    return axios.post(userBaseURL, data, function(req, res) {
+      console.log(req);
+    });
   }
 
   update(id, data) {

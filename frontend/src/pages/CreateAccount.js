@@ -38,7 +38,7 @@ const CreateAccount = () => {
         const data = { active: true, email: email, password: password, username: user_name };
         try {
             const create_response = await UserService.create(data);
-            console.log(create_response)
+            // console.log(create_response)
             try {
                 const info = { email: email, password: password}
                 const login_response = await UserService.login(info);
