@@ -100,7 +100,7 @@ def login():
         return jsonify({"msg": "Bad password"}), 453
 
     access_token = create_access_token(identity=user.id)
-    response = jsonify({"msg": "login successful", "id": user.id})
+    response = jsonify({"msg": "login successful", "id": user.id, "access_token": access_token})
     set_access_cookies(response, access_token)
     add_token_to_database(access_token, app.config["JWT_IDENTITY_CLAIM"])
     
