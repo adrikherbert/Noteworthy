@@ -124,18 +124,19 @@ class NoteList(Resource):
         - api
       summary: Get a list of notes
       description: Get a list of paginated notes
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                resource:
-                  type: array
-                  example: ['user_id', 'title']
-                constraint:
-                  type: array
-                  example: [0, 'example']
+      parameters:
+        - in: query
+          name: resource
+          type: string
+          required: true
+          description: comma-separated list of resources to constrain to
+          example: user_id,collection_id
+        - in: query
+          name: constraint
+          type: string
+          required: true
+          description: comma-separated list of constraints corresponding to each resource
+          example: 13,45
       responses:
         200:
           content:
@@ -197,13 +198,13 @@ class NoteList(Resource):
                     query = query.filter_by(id=int(c))
                 elif resources[r] == 'collection_id':
                     c = constraints[r]
-                    query = query.filter_by(parent_id=int(c))
+                    query = query.filter_by(collection_id=int(c))
                 elif resources[r] == 'user_id':
                     c = constraints[r]
                     query = query.filter_by(user_id=int(c))
                 elif resources[r] == 'access_type':
                     c = constraints[r]
-                    query = query.filter_by(access_type=(c=='true'))
+                    query = query.filter_by(access_type=int(c))
                 elif resources[r] == 'content':
                     c = constraints[r]
                     query = query.filter_by(content=c)
@@ -225,6 +226,21 @@ class NoteList(Resource):
                 elif resources[r] == 'y':
                     c = constraints[r]
                     query = query.filter_by(y=int(c))
+                elif resources[r] == 'start_offset':
+                    c = constraints[r]
+                    query = query.filter_by(start_offset=int(c))
+                elif resources[r] == 'end_offset':
+                    c = constraints[r]
+                    query = query.filter_by(end_offset=int(c))
+                elif resources[r] == 'node_data':
+                    c = constraints[r]
+                    query = query.filter_by(node_data=c)
+                elif resources[r] == 'node_html':
+                    c = constraints[r]
+                    query = query.filter_by(node_html=c)
+                elif resources[r] == 'node_tag_name':
+                    c = constraints[r]
+                    query = query.filter_by(node_tag_name=c)
                 else:
                     return {"msg": "invalid resource"}, 404
         

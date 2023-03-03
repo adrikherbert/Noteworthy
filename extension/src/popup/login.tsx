@@ -25,7 +25,7 @@ const theme = createTheme({
 export default function Login() {
   const [correctPass, setCorrectPass] = useState(false);
   const [validEmail, setValidEmail] = useState(false);
-
+  const [errorMsg, setErrorMsg] = useState("");
   useEffect(() => { 
     localStorage.setItem("authenticated", "false")
   }, []);
@@ -38,7 +38,8 @@ export default function Login() {
         const response = await UserService.login(info);
         localStorage.setItem("authenticated", "true");
         localStorage.setItem("user_id", response.data.id); //Change to id returned when user is created
-        console.log("AUTHENTICATED");
+        setErrorMsg("");
+        window.close();
     } catch (error) {
         if(error.response?.status){
             console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
@@ -57,6 +58,7 @@ export default function Login() {
                     break;
                 default:
             }
+            setErrorMsg("Invalid Email or Password");
         } else {
             console.log(error);
             alert("Unable to login at this time.");
@@ -106,11 +108,7 @@ export default function Login() {
             >
               Sign In
             </Button>
-            {validEmail && correctPass ?
-              ""
-            :
-              "Invalid Email or Password"
-            }
+            <div style={{ color: "red" }}>{errorMsg}</div>
             <Grid container>
               <Grid item xs={12}>
                 <Link href="http://localhost:3000" variant="body2" target="_blank">

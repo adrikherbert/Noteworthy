@@ -33,4 +33,4 @@ class LocationType(Enum):
     """ 
 
     COORD = 0
-    HTML = 0
+    HTML = 1

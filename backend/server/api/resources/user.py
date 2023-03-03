@@ -121,18 +121,19 @@ class UserAccountList(Resource):
         - api
       summary: Get a list of users
       description: Get a list of paginated users
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                resource:
-                  type: array
-                  example: ['email', 'active']
-                constraint:
-                  type: array
-                  example: ['example@example.com', true]
+      parameters:
+        - in: query
+          name: resource
+          type: string
+          required: true
+          description: comma-separated list of resources to constrain to
+          example: username,active
+        - in: query
+          name: constraint
+          type: string
+          required: true
+          description: comma-separated list of constraints corresponding to each resource
+          example: Test,true
       responses:
         200:
           content:
@@ -214,23 +215,25 @@ class UserAccountList(Resource):
         user = schema.load(request.json)
         query = UserAccount.query.filter_by(email=user.email).scalar()
 
-        if not query:
-          db.session.add(user)
-          db.session.commit()
+        if query:
+            return {"msg": "user already exists"}, 400
+        
+        db.session.add(user)
+        db.session.commit()
 
-          collection_schema = CollectionSchema(partial=True)
-          collection = {"user_id": user.id, "access_type": 0, "title": "General"}
-          collection = collection_schema.load(collection)
+        collection_schema = CollectionSchema(partial=True)
+        collection = {"user_id": user.id, "access_type": 0, "title": "General"}
+        collection = collection_schema.load(collection)
 
-          db.session.add(collection)
-          db.session.commit()
+        db.session.add(collection)
+        db.session.commit()
 
-          root_collection_id = {"root_collection_id": collection.id}
+        root_collection_id = {"root_collection_id": collection.id}
 
-          partial_user_schema = UserAccountSchema(partial=True)
-          user = partial_user_schema.load(root_collection_id, instance=user)
+        partial_user_schema = UserAccountSchema(partial=True)
+        user = partial_user_schema.load(root_collection_id, instance=user)
 
-          db.session.commit()
-          return {"msg": "user created", "user": schema.dump(user), "root_collection": collection_schema.dump(collection)}, 201
+        db.session.commit()
+        return {"msg": "user created", "user": schema.dump(user), "root_collection": collection_schema.dump(collection)}, 201
 
-        return {"msg": "user already exists"}, 400
+        

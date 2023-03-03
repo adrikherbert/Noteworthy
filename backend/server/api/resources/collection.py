@@ -124,18 +124,19 @@ class CollectionList(Resource):
         - api
       summary: Get a list of collections
       description: Get a list of paginated collections
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                resource:
-                  type: array
-                  example: ['user_id', 'title']
-                constraint:
-                  type: array
-                  example: [0, 'General']
+      parameters:
+        - in: query
+          name: resource
+          type: string
+          required: true
+          description: comma-separated list of resources to constrain to
+          example: parent_id,title
+        - in: query
+          name: constraint
+          type: string
+          required: true
+          description: comma-separated list of constraints corresponding to each resource
+          example: 27,ExampleTitle
       responses:
         200:
           content:
