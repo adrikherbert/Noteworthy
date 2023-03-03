@@ -193,7 +193,7 @@ def reset_password():
     if not email or not old_password:
         return jsonify({"msg": "Missing email or password"}), 400
     
-    user = UserAccount.query.filter_by(emai=email).first()
+    user = UserAccount.query.filter_by(email=email).first()
     if user is None:
         return jsonify({"msg": "Bad email"}), 452
     elif not pwd_context.verify(old_password, user.password):
