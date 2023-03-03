@@ -11,8 +11,10 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import UserService from '../services/user.service.js';
+import { getCookie } from '../services/note.service.js';
 import './popup.css';
 import { useEffect, useState } from 'react';
+import { getChromeItem, setChromeItem } from '../contentScript/contentScript';
 
 const theme = createTheme({
   palette: {
@@ -27,7 +29,7 @@ export default function Login() {
   const [validEmail, setValidEmail] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   useEffect(() => { 
-    localStorage.setItem("authenticated", "false")
+    localStorage.setItem("authenticated", "false");
   }, []);
 
   async function handleSubmit(event){
@@ -36,8 +38,11 @@ export default function Login() {
     try {
         const info = { email: data.get('email'), password: data.get('password')};
         const response = await UserService.login(info);
+        const user = await UserService.get(response.data.id);
+        await setChromeItem("collection_id", user.data.user.root_collection_id);
         localStorage.setItem("authenticated", "true");
         localStorage.setItem("user_id", response.data.id); //Change to id returned when user is created
+        await setChromeItem("user_id", response.data.id);
         setErrorMsg("");
         window.close();
     } catch (error) {

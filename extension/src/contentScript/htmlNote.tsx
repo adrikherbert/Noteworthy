@@ -6,7 +6,9 @@ import { Folder } from '@styled-icons/boxicons-solid/Folder';
 import { Save } from '@styled-icons/fluentui-system-filled/Save';
 import { Alert, Snackbar } from '@mui/material';
 import { ShadowRoot } from "./ShadowRoot";
+import NoteService from '../services/note.service.js';
 import './note.css';
+import { getChromeItem } from "./contentScript";
 
 const Container = styled.div`
   z-index: 2;
@@ -143,7 +145,7 @@ const HtmlNote = () => {
               prevNotes.reduce(
                 (acc, cv) =>
                   cv.id === noteId
-                    ? acc.push({ ...cv, visible: true }) && acc
+                    ? acc.push({ ...cv, is_visible: true }) && acc
                     : acc.push(cv) && acc,
                 []
               )
@@ -199,59 +201,114 @@ const HtmlNote = () => {
   }
 
   function rebuildRange(startOffset, endOffset, nodeData, nodeHTML, nodeTagName){
-    var cDoc = document.getElementById('content-frame')?.ownerDocument;
+    let cDoc = document.getElementById('content-frame')?.ownerDocument;
+    console.log(cDoc);
     var tagList : any = cDoc?.getElementsByTagName(nodeTagName);
     
     const foundEle = tagList?.find(x => x.innerHTML === nodeHTML);
     var nodeList = foundEle?.childNodes;
     const foundNode = nodeList?.find(x => x.data === nodeData);
+    console.log(foundNode);
 
     // create the range
     var range = cDoc?.createRange();
 
     range?.setStart(foundNode, startOffset);
     range?.setEnd(foundNode, endOffset);
+    console.log(range);
     return range;
-}
+  }
 
-  function newHtmlNote(message, sender, sendResponse) {
+  async function newHtmlNote(message, sender, sendResponse) {
     if (message.info.selectionText != null || message.info.srcUrl != null) {
-      var newId = uuidv4();
       var selectionRange = document.getSelection().getRangeAt(0);
       var startNode = selectionRange.startContainer;
-      var endNode = selectionRange.endContainer;
-
+      
       var startOffset = selectionRange.startOffset;  // where the range starts
       var endOffset = selectionRange.endOffset;      // where the range ends
 
       var nodeData = document.getSelection().toString();                       // the actual selected text
       var nodeHTML = startNode.parentElement.innerHTML;    // parent element innerHTML
       var nodeTagName = startNode.parentElement.tagName;   // parent element tag name
-      var id = startNode.parentElement.id;
-      console.log(startOffset);
-      console.log(endOffset);
-      console.log(nodeData);
-      console.log(nodeHTML);
-      console.log(nodeTagName);
       var useRange = rebuildRange(startOffset, endOffset, nodeData, nodeHTML, nodeTagName);
-      setNotes((prevNotes) =>
-      [...prevNotes, 
-        { x: x, 
-          y: y, 
-          id: newId,
-          range: useRange,
+      try {
+        var userId = await getChromeItem("user_id");
+        console.log(userId);
+        const data = {
+          access_type: 0,
+          collection_id: 47,
+          content: "",
+          is_visible: true,
+          location_type: 1,
+          title: "",
           url: url,
-          visible: true
-        }
-      ]);
-      attachShadow(document.getSelection().getRangeAt(0), newId);
+          user_id: userId,
+          x: x,
+          y: y,
+          start_offset: startOffset,
+          end_offset: endOffset,
+          node_data: nodeData,
+          node_html: nodeHTML,
+          node_tag_name: nodeTagName
+        };
+        const response = await NoteService.create(data);
+        attachShadow(document.getSelection().getRangeAt(0), response.data.id);
+        setNotes((prevNotes) =>
+        [...prevNotes, 
+          response.data.note
+        ]);
+      } catch (error) {
+          if(error.response?.status){
+              console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+          } else {
+              console.log(error);
+              alert("Unable to create a note at this time.");
+          }
+      }
     }
     chrome.runtime.onMessage.removeListener(newHtmlNote);
     sendResponse();
   }
 
+  async function getNotes() {
+    var userId = await getChromeItem("user_id");
+    const constraints = "" + userId + "," + url + "," + 1;
+    const info = {"resource": "user_id,url,location_type", "constraint": constraints}
+    try {
+        const response = await NoteService.getAll(info);
+        let list = [];
+        console.log(response);
+        response.data.results.forEach(function(note) {
+            const data = {
+                id: note.id,
+                title: note.title,
+                content: note.content,
+                x: note.x,
+                y: note.y,
+                url: note.url,
+                is_visible: note.is_visible,
+                start_offset: note.start_offset,
+                end_offset: note.end_offset,
+                node_data: note.node_data,
+                node_html: note.node_html,
+                node_tag_name: note.node_tag_name
+            }
+            list.push(data);
+            attachShadow(rebuildRange(note.start_offset, note.end_offset, note.node_data, note.node_html, note.node_tag_name), note.id);
+        });
+        setNotes(list);
+    } catch(error){
+        if(error.response?.status){
+            console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+        } else {
+            console.log(error);
+        }
+    }
+  };
+
   useEffect(() => {
     document.addEventListener('mousedown', getCoords);
+    getNotes();
   }, []);
 
   useEffect(() => {
@@ -280,44 +337,82 @@ const HtmlNote = () => {
             prevNotes.reduce(
               (acc, cv) =>
                 cv.x === note.x && cv.y === note.y && cv.id === note.id
-                  ? acc.push({ ...cv, note: editedText }) && acc
+                  ? acc.push({ ...cv, content: editedText }) && acc
                   : acc.push(cv) && acc,
               []
             )
           );
         };
 
-        const handleDelete = () => {
+        async function handleDelete () {
           var result = confirm("Are you sure you want to delete this note?");
           if (result) {
-            setNotes((prevNotes) =>
+            try {
+              const response = await NoteService.delete(note.id);
+              setNotes((prevNotes) =>
               prevNotes.reduce(
                 (acc, cv) =>
                   cv.x === note.x && cv.y === note.y ? acc : acc.push(cv) && acc,
                 []
               )
             );
-            document.getElementById(`outerSpan ${note.id}`).remove();
+              document.getElementById(`outerSpan ${note.id}`).remove();
+            } catch (error) {
+                if(error.response?.status){
+                    console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+                } else {
+                    console.log(error);
+                    alert("Unable to delete this note at this time.");
+                }
+            }
           }
         };
 
-        const handleSave = () => {
+        async function handleSave () {
+          try {
+            var userId = await getChromeItem("user_id");
+            const data = {
+              access_type: 0,
+              collection_id: note.collection_id,
+              content: note.content,
+              is_visible: false,
+              location_type: 1,
+              title: note.title,
+              url: note.url,
+              user_id: userId,
+              x: note.x,
+              y: note.y,
+              start_offset: note.start_offset,
+              end_offset: note.end_offset,
+              node_data: note.node_data,
+              node_html: note.node_html,
+              node_tag_name: note.node_tag_name
+            };
+            const response = await NoteService.update(note.id, data);
             setNotes((prevNotes) =>
               prevNotes.reduce(
                 (acc, cv) =>
                   cv.x === note.x && cv.y === note.y && cv.id === note.id
-                    ? acc.push({ ...cv, visible: false }) && acc
+                    ? acc.push({ ...cv, is_visible: false }) && acc
                     : acc.push(cv) && acc,
                 []
               )
             );
             setOpenSave(true);
-          };
+          } catch (error) {
+              if(error.response?.status){
+                  console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+              } else {
+                  console.log(error);
+                  alert("Unable to save this note at this time.");
+              }
+          }
+        };
         
         return (
           <div className="note" key={note.id}>
             <ShadowRoot>
-              <Container x={note.x} y={note.y} visible={note.visible} className="react-sticky-note" >
+              <Container x={note.x} y={note.y} visible={note.is_visible} className="react-sticky-note" >
                 <TitleArea
                   onChange={handleTitleChange}
                   value={note.title ? note.title : ""}
@@ -325,7 +420,7 @@ const HtmlNote = () => {
                 />
                 <StyledTextArea
                   onChange={handleTextChange}
-                  value={note.note ? note.note : ""}
+                  value={note.content ? note.content : ""}
                   key={note.id}
                   placeholder="Note Text Goes Here"
                 />
