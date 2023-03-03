@@ -20,9 +20,9 @@ def create_app(testing=False):
     log = logging.getLogger('werkzeug')
     log.setLevel(logging.DEBUG)
 
-    @app.before_request
-    def print_request():
-        app.logger.debug(f"Request json: {request.json}")
+    # @app.before_request
+    # def print_request():
+    #     app.logger.debug(f"Request json: {request.json}")
 
     if testing is True:
         app.config["TESTING"] = True
