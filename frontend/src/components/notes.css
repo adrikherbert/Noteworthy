@@ -46,7 +46,39 @@
     height: 18%;
     width: 100%;
     padding-left: 1%;
+    padding-right: 1%;
+    gap: 1%;
     background-color: #f3edb3;
+}
+
+.note_title_text {
+    display: block;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.note_title_button_trash {
+    display: block;
+    width: 15px;
+    cursor: pointer;
+    fill: #4b4b4b;
+    opacity: 1;
+}
+
+.note_title_button_trash:hover {
+    opacity: 0.75;
+}
+
+.note_title_button_link {
+    display: block;
+    width: 20px;
+    cursor: pointer;
+    fill: #4b4b4b;
+    opacity: 1;
+}
+
+.note_title_button_link:hover {
+    opacity: 0.75;
 }
 
 .note_text {

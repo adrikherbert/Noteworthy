@@ -19,7 +19,7 @@ const Collection = ({curr_data, changeId}) => {
 
     useEffect(() => {
         getCollections();
-    }, [])
+    }, [numCol])
 
     async function getCollections() {
         // console.log(curr_data);
