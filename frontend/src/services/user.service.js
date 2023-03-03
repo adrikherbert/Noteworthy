@@ -14,15 +14,15 @@ function getAxios() {
 }
 class UserService {
   getAll(data) {
-    return getAxios().get(userBaseURL, {params: data});
+    return axios.get(userBaseURL, {params: data});
   }
 
   get(id) {
-    return getAxios().get(userBaseURL + '/' + id);
+    return axios.get(userBaseURL + '/' + id);
   }
 
   login(info) {
-    return axios.post("http://localhost:5000/auth/login", info, {withCredentials: true});
+    return axios.post("http://localhost:5000/auth/login", info); //, {withCredentials: true}
   }
 
   create(data) {
@@ -32,11 +32,11 @@ class UserService {
   }
 
   update(id, data) {
-    return getAxios().put(userBaseURL + '/' + id, data);
+    return axios.put(userBaseURL + '/' + id, data);
   }
 
   delete(id) {
-    return getAxios().delete(userBaseURL + '/' + id);
+    return axios.delete(userBaseURL + '/' + id);
   }
 
 }

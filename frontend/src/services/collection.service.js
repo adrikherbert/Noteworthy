@@ -12,23 +12,23 @@ function getAxios() {
 }
 class CollectionService {
   getAll(uid_data) {
-    return getAxios().get(colBaseURL, {params: uid_data});
+    return axios.get(colBaseURL, {params: uid_data});
   }
 
   get(id) {
-    return getAxios().get(colBaseURL + '/' + id);
+    return axios.get(colBaseURL + '/' + id);
   }
 
   create(data) {
-    return getAxios().post(colBaseURL, data);
+    return axios.post(colBaseURL, data);
   }
 
   update(id, data) {
-    return getAxios().put(colBaseURL + '/' + id, data);
+    return axios.put(colBaseURL + '/' + id, data);
   }
 
   delete(id) {
-    return getAxios().delete(colBaseURL + '/' + id);
+    return axios.delete(colBaseURL + '/' + id);
   }
 
 }
