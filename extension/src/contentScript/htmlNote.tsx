@@ -199,18 +199,18 @@ const HtmlNote = () => {
   }
 
   function rebuildRange(startOffset, endOffset, nodeData, nodeHTML, nodeTagName){
-    var cDoc = document.getElementById('content-frame').ownerDocument;
-    var tagList : any = cDoc.getElementsByTagName(nodeTagName);
+    var cDoc = document.getElementById('content-frame')?.ownerDocument;
+    var tagList : any = cDoc?.getElementsByTagName(nodeTagName);
     
-    const foundEle = tagList.find(x => x.innerHTML === nodeHTML);
-    var nodeList = foundEle.childNodes;
-    const foundNode = nodeList.find(x => x.data === nodeData);
+    const foundEle = tagList?.find(x => x.innerHTML === nodeHTML);
+    var nodeList = foundEle?.childNodes;
+    const foundNode = nodeList?.find(x => x.data === nodeData);
 
     // create the range
-    var range = cDoc.createRange();
+    var range = cDoc?.createRange();
 
-    range.setStart(foundNode, startOffset);
-    range.setEnd(foundNode, endOffset);
+    range?.setStart(foundNode, startOffset);
+    range?.setEnd(foundNode, endOffset);
     return range;
 }
 
@@ -228,6 +228,11 @@ const HtmlNote = () => {
       var nodeHTML = startNode.parentElement.innerHTML;    // parent element innerHTML
       var nodeTagName = startNode.parentElement.tagName;   // parent element tag name
       var id = startNode.parentElement.id;
+      console.log(startOffset);
+      console.log(endOffset);
+      console.log(nodeData);
+      console.log(nodeHTML);
+      console.log(nodeTagName);
       var useRange = rebuildRange(startOffset, endOffset, nodeData, nodeHTML, nodeTagName);
       setNotes((prevNotes) =>
       [...prevNotes, 
