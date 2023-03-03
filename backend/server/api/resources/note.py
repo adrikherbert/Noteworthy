@@ -226,6 +226,21 @@ class NoteList(Resource):
                 elif resources[r] == 'y':
                     c = constraints[r]
                     query = query.filter_by(y=int(c))
+                elif resources[r] == 'start_offset':
+                    c = constraints[r]
+                    query = query.filter_by(start_offset=int(c))
+                elif resources[r] == 'end_offset':
+                    c = constraints[r]
+                    query = query.filter_by(end_offset=int(c))
+                elif resources[r] == 'node_data':
+                    c = constraints[r]
+                    query = query.filter_by(node_data=c)
+                elif resources[r] == 'node_html':
+                    c = constraints[r]
+                    query = query.filter_by(node_html=c)
+                elif resources[r] == 'node_tag_name':
+                    c = constraints[r]
+                    query = query.filter_by(node_tag_name=c)
                 else:
                     return {"msg": "invalid resource"}, 404
         

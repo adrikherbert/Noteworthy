@@ -18,6 +18,11 @@ class Note(db.Model):
     url = db.Column(TEXT, nullable=False)
     x = db.Column(db.Integer, default=-1, nullable=False)
     y = db.Column(db.Integer, default=-1, nullable=False)
+    start_offset = db.Column(db.Integer, nullable=True)
+    end_offset = db.Column(db.Integer, nullable=True)
+    node_data = db.Column(db.String, nullable=True)
+    node_html = db.Column(db.String, nullable=True)
+    node_tag_name = db.Column(db.String, nullable=True)
 
     def to_dict(self):
         return {
