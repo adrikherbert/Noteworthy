@@ -1,4 +1,4 @@
-from flask import request, jsonify, make_response
+from flask import request, jsonify, make_response, current_app
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from server.api.schemas import NoteSchema
@@ -249,9 +249,14 @@ class NoteList(Resource):
     
 
     def post(self):
-        # Create a note 
+        # Create a note
+
+        current_app.logger.debug(request.json)
+
         schema = NoteSchema()
         note = schema.load(request.json)
+
+        current_app.logger.debug(note)
 
         db.session.add(note)
         db.session.commit()
