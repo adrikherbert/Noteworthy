@@ -204,7 +204,7 @@ class NoteList(Resource):
                     query = query.filter_by(user_id=int(c))
                 elif resources[r] == 'access_type':
                     c = constraints[r]
-                    query = query.filter_by(access_type=(c=='true'))
+                    query = query.filter_by(access_type=int(c))
                 elif resources[r] == 'content':
                     c = constraints[r]
                     query = query.filter_by(content=c)
