@@ -159,7 +159,15 @@ def reset_password():
             schema:
               type: object
               properties:
-                password:
+                email:
+                  type: string
+                  example: myuser@myuser.com
+                  required: true
+                old_password:
+                  type: string
+                  example: P4$$w0rd!
+                  required: true
+                new_password:
                   type: string
                   example: P4$$w0rd!
                   required: true
@@ -181,17 +189,21 @@ def reset_password():
         return jsonify({"msg": "Missing JSON in request"}), 400
 
     email = request.json.get("email", None)
-    if not email or not password:
+    old_password = request.json.get("old_password", None)
+    if not email or not old_password:
         return jsonify({"msg": "Missing email or password"}), 400
     
     user = UserAccount.query.filter_by(emai=email).first()
     if user is None:
-        return jsonify({"msg": "The user cannot be found"}), 400
+        return jsonify({"msg": "Bad email"}), 452
+    elif not pwd_context.verify(old_password, user.password):
+        return jsonify({"msg": "Bad password"}), 453
     
-    password = request.json.get("password", None)
-    if not password:
-        return jsonify({"msg": "Missing password"}), 400
-    change_pass(user, password)
+    new_password = request.json.get("new_password", None)
+    if not new_password:
+        return jsonify({"msg": "Missing new password"}), 400
+    
+    change_pass(user, new_password)
     return jsonify({"msg": "password changed"}), 200        
 
 
