@@ -107,39 +107,39 @@ def login():
     return response, 200
 
 
-# @blueprint.route("/revoke_access", methods=["DELETE"])
-# @jwt_required()
-# def revoke_access_token():
-#     """Revoke an access token
+@blueprint.route("/revoke_access", methods=["DELETE"])
+@jwt_required()
+def revoke_access_token():
+    """Revoke an access token
 
-#     ---
-#     delete:
-#       tags:
-#         - auth
-#       summary: Revoke an access token
-#       description: Revoke an access token
-#       responses:
-#         200:
-#           content:
-#             application/json:
-#               schema:
-#                 type: object
-#                 properties:
-#                   message:
-#                     type: string
-#                     example: token revoked
-#         400:
-#           description: bad request
-#         401:
-#           description: unauthorized
-#     """
-#     jti = get_jwt()["jti"]
-#     user_identity = get_jwt_identity()
-#     revoke_token(jti, user_identity)
+    ---
+    delete:
+      tags:
+        - auth
+      summary: Revoke an access token
+      description: Revoke an access token
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: token revoked
+        400:
+          description: bad request
+        401:
+          description: unauthorized
+    """
+    jti = get_jwt()["jti"]
+    user_identity = get_jwt_identity()
+    revoke_token(jti, user_identity)
 
-#     response = jsonify({"msg": "token revoked"})
-#     unset_jwt_cookies(response)
-#     return response, 200
+    response = jsonify({"msg": "token revoked"})
+    unset_jwt_cookies(response)
+    return response, 200
 
 
 @blueprint.route("/reset_password", methods=["POST"])
