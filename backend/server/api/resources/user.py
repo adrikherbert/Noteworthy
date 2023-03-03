@@ -83,7 +83,7 @@ class UserAccountResource(Resource):
           description: user does not exists
     """
 
-    method_decorators = [jwt_required()]
+    # method_decorators = [jwt_required()]
 
     def get(self, user_id):
         schema = UserAccountSchema()
@@ -170,7 +170,7 @@ class UserAccountList(Resource):
                   user: UserAccountSchema
     """
 
-    @jwt_required()
+    # @jwt_required()
     def get(self):
         """
         Query for a user list by resource

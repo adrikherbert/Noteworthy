@@ -108,7 +108,7 @@ def login():
 
 
 @blueprint.route("/revoke_access", methods=["DELETE"])
-@jwt_required()
+# @jwt_required()
 def revoke_access_token():
     """Revoke an access token
 
@@ -143,7 +143,7 @@ def revoke_access_token():
 
 
 @blueprint.route("/reset_password", methods=["POST"])
-@jwt_required()
+# @jwt_required()
 def reset_password():
     """Reset a user's password
 

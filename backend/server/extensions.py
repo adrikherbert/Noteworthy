@@ -20,5 +20,5 @@ ma = Marshmallow()
 migrate = Migrate()
 apispec = APISpecExt()
 pwd_context = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto")
-cors = CORS(origins=["http://localhost:3000"], expose_headers="Set-Cookie", supports_credentials=True)
+cors = CORS()   # origins=["http://localhost:3000"], expose_headers="Set-Cookie", supports_credentials=True FIND ORIGIN FOR EXTENSION
 mail = Mail()

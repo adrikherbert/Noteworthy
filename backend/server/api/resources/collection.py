@@ -86,7 +86,7 @@ class CollectionResource(Resource):
           description: collection does not exist
     """
 
-    method_decorators = [jwt_required()]
+    # method_decorators = [jwt_required()]
 
     def get(self, collection_id):
         # get a collection
@@ -173,7 +173,7 @@ class CollectionList(Resource):
                   collection: CollectionSchema
     """
 
-    method_decorators = [jwt_required()]
+    # method_decorators = [jwt_required()]
 
     def get(self):
         """

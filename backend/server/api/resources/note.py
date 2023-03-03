@@ -86,7 +86,7 @@ class NoteResource(Resource):
           description: note does not exist
     """
 
-    method_decorators = [jwt_required()]
+    # method_decorators = [jwt_required()]
 
     def get(self, note_id):
         # get note
@@ -172,7 +172,7 @@ class NoteList(Resource):
                   note: NoteSchema
     """
 
-    method_decorators = [jwt_required()]
+    # method_decorators = [jwt_required()]
 
     
     def get(self):
