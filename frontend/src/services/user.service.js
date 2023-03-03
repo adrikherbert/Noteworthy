@@ -25,6 +25,14 @@ class UserService {
     return axios.post("http://localhost:5000/auth/login", info); //, {withCredentials: true}
   }
 
+  tempPass(email){
+    return axios.post("http://localhost:5000/auth/temp_password", email);
+  }
+
+  passReset(data){
+    return axios.post("http://localhost:5000/auth/reset_password", data);
+  }
+
   create(data) {
     return axios.post(userBaseURL, data, function(req, res) {
       console.log(req);
