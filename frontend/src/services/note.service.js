@@ -12,19 +12,19 @@ function getAxios() {
 }
 class NoteService {
   getAll(uid_data) {
-    return getAxios().get(noteBaseURL, {params: uid_data});
+    return axios.get(noteBaseURL, {params: uid_data});
   }
 
   get(id) {
-    return getAxios().get(noteBaseURL + '/' + id);
+    return axios.get(noteBaseURL + '/' + id);
   }
 
   update(id, data) {
-    return getAxios().put(noteBaseURL + '/' + id, data);
+    return axios.put(noteBaseURL + '/' + id, data);
   }
 
   delete(id) {
-    return getAxios().delete(noteBaseURL + '/' + id);
+    return axios.delete(noteBaseURL + '/' + id);
   }
 
 }
