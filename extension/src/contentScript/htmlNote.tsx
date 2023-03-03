@@ -198,15 +198,43 @@ const HtmlNote = () => {
     outsideSpan.shadowRoot.appendChild(svgSpan);
   }
 
+  function rebuildRange(startOffset, endOffset, nodeData, nodeHTML, nodeTagName){
+    var cDoc = document.getElementById('content-frame').ownerDocument;
+    var tagList : any = cDoc.getElementsByTagName(nodeTagName);
+    
+    const foundEle = tagList.find(x => x.innerHTML === nodeHTML);
+    var nodeList = foundEle.childNodes;
+    const foundNode = nodeList.find(x => x.data === nodeData);
+
+    // create the range
+    var range = cDoc.createRange();
+
+    range.setStart(foundNode, startOffset);
+    range.setEnd(foundNode, endOffset);
+    return range;
+}
+
   function newHtmlNote(message, sender, sendResponse) {
     if (message.info.selectionText != null || message.info.srcUrl != null) {
       var newId = uuidv4();
+      var selectionRange = document.getSelection().getRangeAt(0);
+      var startNode = selectionRange.startContainer;
+      var endNode = selectionRange.endContainer;
+
+      var startOffset = selectionRange.startOffset;  // where the range starts
+      var endOffset = selectionRange.endOffset;      // where the range ends
+
+      var nodeData = document.getSelection().toString();                       // the actual selected text
+      var nodeHTML = startNode.parentElement.innerHTML;    // parent element innerHTML
+      var nodeTagName = startNode.parentElement.tagName;   // parent element tag name
+      var id = startNode.parentElement.id;
+      var useRange = rebuildRange(startOffset, endOffset, nodeData, nodeHTML, nodeTagName);
       setNotes((prevNotes) =>
       [...prevNotes, 
         { x: x, 
           y: y, 
           id: newId,
-          range: document.getSelection().getRangeAt(0),
+          range: useRange,
           url: url,
           visible: true
         }
