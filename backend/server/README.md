@@ -13,8 +13,9 @@ This is a file to explain the various folders and files within the server, as we
 **CLI**
     "flask routes":  Shows all available routes as well as the methods and rules.
     "flask run":     This runs the server locally.
-    "flask db migrate [-m 'comment']": Pushes the changes to the database. This will fail if the class name has not been added to all
+    "flask db migrate [-m 'comment']": Creates a migration that can be pushed to the db. This will fail if the class name has not been added to all
         the proper places. DO NOT name a class the same name as a default PostgreSQL table. This is annoying to fix.
+    "flask db upgrade": Pushes the above migration to the db.
 
 
 **Current directory**
