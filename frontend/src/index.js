@@ -11,9 +11,9 @@ import Login from "./pages/Login";
 import CreateAccount from "./pages/CreateAccount";
 import AuthWrapper from "./pages/AuthWrapper";
 import Settings from "./pages/Settings";
+import ResetPassword from './pages/ResetPassword';
 
 import reportWebVitals from './reportWebVitals';
-
 
 const App = () => {
 
@@ -23,6 +23,7 @@ const App = () => {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/createaccount" element={<CreateAccount />} />
+        <Route path="/resetpassword" element={<ResetPassword />} />
         <Route element={<AuthWrapper />}>
           <Route exact path="/" element={<Navigate to="/login"/>} />
           <Route exact path="/home" element={<UserHome />} />

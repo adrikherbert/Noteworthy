@@ -4,9 +4,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { Delete } from '@styled-icons/material/Delete';
 import { Folder } from '@styled-icons/boxicons-solid/Folder';
 import { Save } from '@styled-icons/fluentui-system-filled/Save';
-import { Alert, Snackbar } from '@mui/material';
+import { Alert, getCardContentUtilityClass, Snackbar, useRadioGroup } from '@mui/material';
 import { ShadowRoot } from "./ShadowRoot";
 import './note.css';
+import NoteService from '../services/note.service.js';
+import { getChromeItem, getCollectionId, setChromeItem } from "./contentScript";
 
 const Container = styled.div`
   z-index: 100;
@@ -107,6 +109,9 @@ const Note = () => {
   const [notes, setNotes] = useState([]);
   const [openSave, setOpenSave] = useState(false);
   const url = window.location.href;
+  setChromeItem("url", url);
+  const [userId, setUserId] = useState<Number>();
+  localStorage.setItem("url", url);
 
   const getCoords = (event) => {
     if (event.button == 2) {
@@ -116,29 +121,90 @@ const Note = () => {
     }
   };
 
-  function newNote(message, sender, sendResponse) {
+  async function newNote(message, sender, sendResponse) {
     if (message.info.selectionText == null && message.info.srcUrl == null) {
-      var newId = uuidv4();
-      setNotes((prevNotes) =>
-      [...prevNotes, 
-        { x: x, 
-          y: y, 
-          id: newId,
+      try {
+        var userId = await getChromeItem("user_id");
+        var collectionId = await getCollectionId("collection_id");
+        const data = {
+          access_type: 0,
+          collection_id: collectionId,
+          content: "",
+          is_visible: true,
+          location_type: 0,
+          title: "",
           url: url,
-          visible: true
-        }
-      ]);
+          user_id: userId,
+          x: x,
+          y: y
+        };
+        const response = await NoteService.create(data);
+        setNotes((prevNotes) =>
+        [...prevNotes, 
+          response.data.note
+        ]);
+      } catch (error) {
+          if(error.response?.status){
+              console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+          } else {
+              console.log(error);
+              alert("Unable to create a note at this time.");
+          }
+      }
     }
     chrome.runtime.onMessage.removeListener(newNote);
     sendResponse();
   }
 
+  async function getNotes() {
+    var userId = await getChromeItem("user_id");
+    console.log(userId);
+    if (!userId) {
+      setNotes([]);
+    } else {
+      const constraints = "" + userId + "," + url + "," + 0;
+      const info = {"resource": "user_id,url,location_type", "constraint": constraints}
+      try {
+          const response = await NoteService.getAll(info);
+          let list = [];
+          console.log(response);
+          response.data.results.forEach(function(note) {
+              const data = {
+                  id: note.id,
+                  title: note.title,
+                  content: note.content,
+                  x: note.x,
+                  y: note.y,
+                  url: note.url,
+                  is_visible: note.is_visible,
+              }
+              list.push(data);
+          });
+          setNotes(list);
+      } catch(error){
+          if(error.response?.status){
+              console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+          } else {
+              console.log(error);
+          }
+      }
+    }
+  };
+
   useEffect(() => {
     document.addEventListener('mousedown', getCoords);
+    getNotes();
   }, []);
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener(newNote);
+    chrome.storage.onChanged.addListener(async function(changes, namespace) {
+      console.log("CHANGE DETECTED");
+      var userId = await getChromeItem("user_id");
+      if (userId == null) {
+        setNotes([]);
+      }
+    });
   }, [x, y]);
 
   return (
@@ -163,37 +229,70 @@ const Note = () => {
             prevNotes.reduce(
               (acc, cv) =>
                 cv.x === note.x && cv.y === note.y && cv.id === note.id
-                  ? acc.push({ ...cv, note: editedText }) && acc
+                  ? acc.push({ ...cv, content: editedText }) && acc
                   : acc.push(cv) && acc,
               []
             )
           );
         };
 
-        const handleDelete = () => {
+        async function handleDelete () {
           var result = confirm("Are you sure you want to delete this note?");
           if (result) {
-            setNotes((prevNotes) =>
+            try {
+              const response = await NoteService.delete(note.id);
+              setNotes((prevNotes) =>
               prevNotes.reduce(
                 (acc, cv) =>
                   cv.x === note.x && cv.y === note.y ? acc : acc.push(cv) && acc,
                 []
               )
             );
+            } catch (error) {
+                if(error.response?.status){
+                    console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+                } else {
+                    console.log(error);
+                    alert("Unable to delete this note at this time.");
+                }
+            }
           }
         };
 
-        const handleSave = () => {
-          setNotes((prevNotes) =>
-            prevNotes.reduce(
-              (acc, cv) =>
-                cv.x === note.x && cv.y === note.y && cv.id === note.id
-                  ? acc.push({ ...cv, visible: false }) && acc
-                  : acc.push(cv) && acc,
-              []
-            )
-          );
-          setOpenSave(true);
+        async function handleSave () {
+          try {
+            var userId = await getChromeItem("user_id");
+            const data = {
+              access_type: 0,
+              collection_id: note.collection_id,
+              content: note.content,
+              is_visible: false,
+              location_type: 0,
+              title: note.title,
+              url: note.url,
+              user_id: userId,
+              x: note.x,
+              y: note.y
+            };
+            const response = await NoteService.update(note.id, data);
+            setNotes((prevNotes) =>
+              prevNotes.reduce(
+                (acc, cv) =>
+                  cv.x === note.x && cv.y === note.y && cv.id === note.id
+                    ? acc.push({ ...cv, is_visible: false }) && acc
+                    : acc.push(cv) && acc,
+                []
+              )
+            );
+            setOpenSave(true);
+          } catch (error) {
+              if(error.response?.status){
+                  console.log("Error Code " + error.response.status + ": " + error.response.data.msg);
+              } else {
+                  console.log(error);
+                  alert("Unable to save this note at this time.");
+              }
+          }
         };
 
         function handleClick () {
@@ -201,7 +300,7 @@ const Note = () => {
                 prevNotes.reduce(
                   (acc, cv) =>
                     cv.id === note.id
-                      ? acc.push({ ...cv, visible: true }) && acc
+                      ? acc.push({ ...cv, is_visible: true }) && acc
                       : acc.push(cv) && acc,
                   []
                 )
@@ -211,7 +310,7 @@ const Note = () => {
         return (
           <div className="note" key={note.id}>
             <ShadowRoot>
-              <Container x={note.x} y={note.y} visible={note.visible} className="react-sticky-note">
+              <Container x={note.x} y={note.y} visible={note.is_visible} className="react-sticky-note">
                 <TitleArea
                   onChange={handleTitleChange}
                   value={note.title ? note.title : ""}
@@ -219,7 +318,7 @@ const Note = () => {
                 />
                 <StyledTextArea
                   onChange={handleTextChange}
-                  value={note.note ? note.note : ""}
+                  value={note.content ? note.content : ""}
                   key={note.id}
                   placeholder="Note Text Goes Here"
                 />

@@ -16,12 +16,13 @@ const Note = ({data, onDelete}) => {
     const del_text = "Are you sure you want to delete this note? This action cannot be undone.";
 
     async function linkWebsite(){
-        window.open(data.url, )
+        alert("You are navigating to an external site.");
+        window.open(data.url);
     }
 
     async function handleDelete(event){
         event.preventDefault();
-        showConfirm(true)
+        showConfirm(true);
     }
 
     async function handleConfirm(){
