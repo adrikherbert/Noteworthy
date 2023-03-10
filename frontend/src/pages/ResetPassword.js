@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from "react-router-dom";
 import { Tooltip } from "@mui/material"
 
@@ -20,8 +20,6 @@ const ResetPassword = () => {
     const [validPassword, setVPassword] = useState(false);
     const [validEmail, setValidEmail] = useState(false);
     const [passwordShown, setPShown] = useState(false);
-
-    const [success, setSuccess] = useState(false);
 
     const vPassword = new RegExp(/^(?=.{8,})(?=.*[a-z])(?=.*[0-9])(?=.*[A-Z])(?=.*[@#$%^&+=]).*$/);
 

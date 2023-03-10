@@ -6,6 +6,7 @@ import '../page.css';
 
 import UserService from '../services/user.service.js';
 import Confirm from '../components/Confirm.js';
+import ChangePassword from '../components/ChangePassword'
 
 const Settings = () => {
     const navigate = useNavigate();
@@ -14,8 +15,6 @@ const Settings = () => {
     const [email, setEmail] = useState("");
     const [curr_name, setCName] = useState("");
     const [new_name, setNName] = useState("");
-    const [old_password, setOPassword] = useState("");
-    const [new_password, setNPassword] = useState("");
 
     const del_title = "Delete your account?"
     const del_text = "Are you sure you want to delete your account and all of its data? This action cannot be undone.";
@@ -23,6 +22,7 @@ const Settings = () => {
     const [isLoading, setLoading] = useState(true);
 
     const [confirmModal, showConfirm] = useState(false);
+    const [passModal, showChangePass] = useState(false);
 
     useEffect(() => {
         const stored_id = localStorage.getItem("user_id");
@@ -81,6 +81,11 @@ const Settings = () => {
         showConfirm(true)
     }
 
+    async function handleChangePass(event){
+        event.preventDefault();
+        showChangePass(true)
+    }
+
     async function handleConfirm(){
         try{
             const response = await UserService.delete(id);
@@ -131,6 +136,10 @@ const Settings = () => {
                         />
                     </label>
                     <label className="settings_display_option">
+                        <p className="settings_option_title">Change Password:</p>
+                        <p className="settings_option_pass" onClick={handleChangePass}>Change my password.</p>
+                    </label>
+                    <label className="settings_display_option">
                         <p className="settings_option_title">Delete Account:</p>
                         <p className="settings_option_delete" onClick={handleDelete}>Permanently delete my account.</p>
                     </label>
@@ -142,6 +151,7 @@ const Settings = () => {
                 </div>
             </div>
             {confirmModal && <Confirm closeModal={showConfirm} onConfirm={handleConfirm} text={del_text} title={del_title}/>}
+            {passModal && <ChangePassword closeModal={showChangePass} email={email}/>}
         </div>
     )   
 }
